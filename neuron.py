@@ -4,9 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-
 CIFAR_DIR = 'data/cifar-10-batches-py'
-print(os.listdir(CIFAR_DIR))
 
 
 def load_data(filename):
@@ -32,6 +30,8 @@ class CiferData:
                     all_labels.append(label)
         self._data = np.vstack(all_data)
         self._labels = np.hstack(all_labels)
+        print(self._data.shape)
+        print(self._labels.shape)
         self._num_examples = self._data.shape[0]
         self._need_shuffle = need_shuffle
         self._indicator = 0
@@ -66,6 +66,11 @@ class CiferData:
         return batch_data, batch_labels
 
 
+train_filenames = [os.path.join(CIFAR_DIR, 'data_batch_{}'.format(i)) for i in range(1, 6)]
+test_filenames = [os.path.join(CIFAR_DIR, 'test_batch')]
+train_data = CiferData(train_filenames, True)
+test_data = CiferData(test_filenames, False)
+
 x = tf.placeholder(tf.float32, [None, 3072])
 # [None]
 y = tf.placeholder(tf.int64, [None])
@@ -90,6 +95,11 @@ with tf.name_scope('train_op'):
     train_op = tf.train.AdamOptimizer(1e-3).minimize(loss)
 
 init = tf.global_variables_initializer()
+batch_size = 20
+train_steps = 1000
 
-
-
+with tf.Session() as sess:
+    batch_data, batch_labels = train_data.next_batch(batch_size)
+    loss_val, accu_val, _ = sess.run(
+        [loss, accuracy, train_op],
+        feed_dict={x: batch_data, y: batch_labels})
