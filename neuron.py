@@ -109,7 +109,7 @@ with tf.Session() as sess:
             feed_dict={x: batch_data,
                        y: batch_labels})
         if (i + 1) % 500 == 0:
-            print('[Train] Step: %d, loss: %4.5f, acc: %4.5f' % (i + 1, loss_val, acc_val))
+            print('[Train] Step: {}, loss: {}, acc: {}'.format(i + 1, loss_val, acc_val))
         if (i + 1) % 5000 == 0:
             test_data = CiferData(test_filenames, False)
             all_test_acc_val = []
@@ -121,4 +121,4 @@ with tf.Session() as sess:
                                            })
                 all_test_acc_val.append(test_acc_val)
             test_acc = np.mean(all_test_acc_val)
-            print('[Test] Step: %d, acc: %4.5f' % (i + 1, test_acc))
+            print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))
