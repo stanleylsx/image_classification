@@ -29,6 +29,7 @@ class CiferData:
                     all_data.append(item)
                     all_labels.append(label)
         self._data = np.vstack(all_data)
+        self._data = self._data / 127.5 - 1
         self._labels = np.hstack(all_labels)
         print(self._data.shape)
         print(self._labels.shape)
@@ -86,7 +87,7 @@ p_y_1 = tf.nn.sigmoid(y_)
 # [None, 1]
 y_reshaped = tf.reshape(y, (-1, 1))
 y_reshaped_float = tf.cast(y_reshaped, tf.float32)
-loss = tf.reduce_mean(tf.square(y_reshaped - p_y_1))
+loss = tf.reduce_mean(tf.square(y_reshaped_float - p_y_1))
 predict = p_y_1 > 0.5
 correct_prediction = tf.equal(tf.cast(predict, tf.int64), y_reshaped)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float64))
@@ -96,10 +97,28 @@ with tf.name_scope('train_op'):
 
 init = tf.global_variables_initializer()
 batch_size = 20
-train_steps = 1000
+train_steps = 100000
+test_steps = 100
 
 with tf.Session() as sess:
-    batch_data, batch_labels = train_data.next_batch(batch_size)
-    loss_val, accu_val, _ = sess.run(
-        [loss, accuracy, train_op],
-        feed_dict={x: batch_data, y: batch_labels})
+    sess.run(init)
+    for i in range(train_steps):
+        batch_data, batch_labels = train_data.next_batch(batch_size)
+        loss_val, acc_val, _ = sess.run(
+            [loss, accuracy, train_op],
+            feed_dict={x: batch_data,
+                       y: batch_labels})
+        if (i + 1) % 500 == 0:
+            print('[Train] Step: %d, loss: %4.5f, acc: %4.5f' % (i + 1, loss_val, acc_val))
+        if (i + 1) % 5000 == 0:
+            test_data = CiferData(test_filenames, False)
+            all_test_acc_val = []
+            for j in range(test_steps):
+                test_batch_data, test_batch_labels = test_data.next_batch(batch_size)
+                test_acc_val = sess.run(
+                    [accuracy], feed_dict={x: test_batch_data,
+                                           y: test_batch_labels
+                                           })
+                all_test_acc_val.append(test_acc_val)
+            test_acc = np.mean(all_test_acc_val)
+            print('[Test] Step: %d, acc: %4.5f' % (i + 1, test_acc))
