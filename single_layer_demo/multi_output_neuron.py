@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-CIFAR_DIR = 'data/cifar-10-batches-py'
+CIFAR_DIR = '../data/cifar-10-batches-py'
 
 
 def load_data(filename):
@@ -24,10 +24,8 @@ class CiferData:
         all_labels = []
         for filename in filenames:
             data, labels = load_data(filename)
-            for item, label in zip(data, labels):
-                if label in [0, 1]:
-                    all_data.append(item)
-                    all_labels.append(label)
+            all_data.append(data)
+            all_labels.append(labels)
         self._data = np.vstack(all_data)
         self._data = self._data / 127.5 - 1
         self._labels = np.hstack(all_labels)
@@ -76,20 +74,31 @@ x = tf.placeholder(tf.float32, [None, 3072])
 # [None]
 y = tf.placeholder(tf.int64, [None])
 
-# [3072, 1]
-w = tf.get_variable('w', [x.get_shape()[-1], 1], initializer=tf.random_normal_initializer(0, 1))
-# [1, ]
-b = tf.get_variable('b', [1], initializer=tf.constant_initializer(0.0))
-# [None, 3072] * [3072, 1] = [None, 1]
+# [3072, 10]
+w = tf.get_variable('w', [x.get_shape()[-1], 10], initializer=tf.random_normal_initializer(0, 1))
+# [10, ]
+b = tf.get_variable('b', [10], initializer=tf.constant_initializer(0.0))
+# [None, 3072] * [3072, 10] = [None, 10]
 y_ = tf.matmul(x, w) + b
-# [None, 1]
-p_y_1 = tf.nn.sigmoid(y_)
-# [None, 1]
-y_reshaped = tf.reshape(y, (-1, 1))
-y_reshaped_float = tf.cast(y_reshaped, tf.float32)
-loss = tf.reduce_mean(tf.square(y_reshaped_float - p_y_1))
-predict = p_y_1 > 0.5
-correct_prediction = tf.equal(tf.cast(predict, tf.int64), y_reshaped)
+# mean square loss
+"""
+# course: 1 + e^x
+# api: e^x / sum(e^x)
+# [[0.01, 0.9, ..., 0.03], []]
+p_y = tf.nn.softmax(y_)
+# 5 -> [0,0,0,0,0,1,0,0,0,0]
+y_one_hot = tf.one_hot(y, 10, dtype=tf.float32)
+loss = tf.reduce_mean(tf.square(y_one_hot - p_y))
+"""
+
+loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
+# y_ -> softmax
+# y -> one_hot
+# loss = y_logy_
+
+# indices
+predict = tf.argmax(y_, 1)
+correct_prediction = tf.equal(predict, y)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float64))
 
 with tf.name_scope('train_op'):
@@ -97,7 +106,7 @@ with tf.name_scope('train_op'):
 
 init = tf.global_variables_initializer()
 batch_size = 20
-train_steps = 100000
+train_steps = 10000
 test_steps = 100
 
 with tf.Session() as sess:
