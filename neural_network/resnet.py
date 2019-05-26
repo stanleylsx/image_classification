@@ -123,6 +123,18 @@ def residual_block(x, output_channel):
     output_x = conv2 + padded_x
     return output_x
 
+def res_net(x, num_residual_blocks, num_subsampling, num_filter_base, class_num):
+    """
+
+    :param x:
+    :param num_residual_blocks:
+    :param num_subsampling:
+    :param num_filter_base:
+    :param class_num:
+    :return:
+    """
+
+
 
 x = tf.placeholder(tf.float32, [None, 3072])
 y = tf.placeholder(tf.int64, [None])
