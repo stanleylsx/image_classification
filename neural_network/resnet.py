@@ -109,6 +109,8 @@ def residual_block(x, output_channel):
                                                (2, 2),
                                                (2, 2),
                                                padding='valid')
+
+        # 池化操作不会增加通道数，故需要手动的增加通道数
         padded_x = tf.pad(pooled_x,
                           [
                               [0, 0],
