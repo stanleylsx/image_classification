@@ -105,7 +105,7 @@ def residual_block(x, output_channel):
 
     if increase_dim:
         # [None, image_width, image_height, channel] -> [,,,channel*2]
-        pooled_x = tf.layers.average_pooling2d(conv2,
+        pooled_x = tf.layers.average_pooling2d(x,
                                                (2, 2),
                                                (2, 2),
                                                padding='valid')
@@ -116,7 +116,7 @@ def residual_block(x, output_channel):
                               [0, 0],
                               [0, 0],
                               [0, 0],
-                              [input_channel//2, input_channel//2]
+                              [input_channel // 2, input_channel // 2]
                           ])
     else:
         padded_x = x
@@ -150,12 +150,11 @@ def res_net(x, num_residual_blocks, num_filter_base, class_num):
     for sample_id in range(num_subsampling):
         for i in range(num_residual_blocks[sample_id]):
             with tf.variable_scope('conv%d_%d' % (sample_id, i)):
-                conv = residual_block(layers[-1],
-                                      num_filter_base * (2 ** sample_id))
+                conv = residual_block(layers[-1], num_filter_base * (2 ** sample_id))
                 layers.append(conv)
 
     multiplier = 2 ** (num_subsampling - 1)
-    assert layers[-1].get_shape().sa_list()[1:] == [input_size[0] / multiplier, input_size[1] / multiplier,
+    assert layers[-1].get_shape().as_list()[1:] == [input_size[0] / multiplier, input_size[1] / multiplier,
                                                     num_filter_base * multiplier]
     with tf.variable_scope('fc'):
         # layer[-1].shape : [None, width, height, channel]
