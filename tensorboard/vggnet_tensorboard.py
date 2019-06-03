@@ -167,6 +167,34 @@ with tf.name_scope('train_op'):
 # 2.训练过程中将这些变量计算出来，输出到文件中
 # 3.文件解析 ./tensorboard --logdir=dir.
 
+
+def variable_summary(var, name):
+    """
+    Constructs summary for statistics of a variable
+    :param var:
+    :param name:
+    :return:
+    """
+    with tf.name_scope(name):
+        mean = tf.reduce_mean(var)
+        with tf.name_scope('stddev'):
+            stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
+        tf.summary.scalar('mean', mean)
+        tf.summary.scalar('stddev', stddev)
+        tf.summary.scalar('min', tf.reduce_min(var))
+        tf.summary.scalar('max', tf.reduce_max(var))
+        tf.summary.histogram('histogram', var)
+
+
+with tf.name_scope('summary'):
+    variable_summary(conv1_1, 'conv1_1')
+    variable_summary(conv1_2, 'conv1_2')
+    variable_summary(conv2_1, 'conv2_1')
+    variable_summary(conv2_2, 'conv2_2')
+    variable_summary(conv3_1, 'conv3_1')
+    variable_summary(conv3_2, 'conv3_2')
+
+
 # TODO.1 指定面板图上显示的变量
 # 'loss': <10, 1.1>, <20, 1.08>
 loss_summary = tf.summary.scalar('loss', loss)
@@ -200,7 +228,7 @@ output_summary_every_steps = 100
 
 with tf.Session() as sess:
     sess.run(init)
-    # TODO.3 文件解析 ./tensorboard --logdir=dir.
+
     train_writer = tf.summary.FileWriter(train_log_dir, sess.graph)
     test_writer = tf.summary.FileWriter(test_log_dir)
 
