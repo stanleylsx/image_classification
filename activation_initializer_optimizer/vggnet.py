@@ -77,76 +77,81 @@ x_image = tf.reshape(x, [-1, 3, 32, 32])
 # 32*32
 x_image = tf.transpose(x_image, perm=[0, 2, 3, 1])
 
-# conv1: 神经元图,feature_map,输出图像
-conv1_1 = tf.layers.conv2d(x_image,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv1_1'
-                           )
 
-conv1_2 = tf.layers.conv2d(x_image,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv1_2'
-                           )
+def convet(inputs, activation):
+    # conv1: 神经元图,feature_map,输出图像
+    conv1_1 = tf.layers.conv2d(inputs,
+                               32,  # outout channel number
+                               (3, 3),  # kernel size
+                               padding='same',
+                               activation=activation,
+                               name='conv1_1'
+                               )
 
-# 16*16
-pooling1 = tf.layers.max_pooling2d(conv1_2,
-                                   (2, 2),  # kernel size
-                                   (2, 2),  # stride
-                                   name='pool1'
-                                   )
+    conv1_2 = tf.layers.conv2d(conv1_1,
+                               32,  # outout channel number
+                               (3, 3),  # kernel size
+                               padding='same',
+                               activation=activation,
+                               name='conv1_2'
+                               )
 
-conv2_1 = tf.layers.conv2d(pooling1,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv2_1'
-                           )
+    # 16*16
+    pooling1 = tf.layers.max_pooling2d(conv1_2,
+                                       (2, 2),  # kernel size
+                                       (2, 2),  # stride
+                                       name='pool1'
+                                       )
 
-conv2_2 = tf.layers.conv2d(pooling1,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv2_2'
-                           )
-# 8*8
-pooling2 = tf.layers.max_pooling2d(conv2_2,
-                                   (2, 2),  # kernel size
-                                   (2, 2),  # stride
-                                   name='pool2'
-                                   )
+    conv2_1 = tf.layers.conv2d(pooling1,
+                               32,  # outout channel number
+                               (3, 3),  # kernel size
+                               padding='same',
+                               activation=activation,
+                               name='conv2_1'
+                               )
 
-conv3_1 = tf.layers.conv2d(pooling2,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv3_1'
-                           )
+    conv2_2 = tf.layers.conv2d(conv2_1,
+                               32,  # outout channel number
+                               (3, 3),  # kernel size
+                               padding='same',
+                               activation=activation,
+                               name='conv2_2'
+                               )
+    # 8*8
+    pooling2 = tf.layers.max_pooling2d(conv2_2,
+                                       (2, 2),  # kernel size
+                                       (2, 2),  # stride
+                                       name='pool2'
+                                       )
 
-conv3_2 = tf.layers.conv2d(pooling2,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv3_2'
-                           )
+    conv3_1 = tf.layers.conv2d(pooling2,
+                               32,  # outout channel number
+                               (3, 3),  # kernel size
+                               padding='same',
+                               activation=activation,
+                               name='conv3_1'
+                               )
 
-# 4*4*32
-pooling3 = tf.layers.max_pooling2d(conv3_2,
-                                   (2, 2),  # kernel size
-                                   (2, 2),  # stride
-                                   name='pool3'
-                                   )
-# 展平 [None, 4*4*32]
-flatten = tf.layers.flatten(pooling3)
+    conv3_2 = tf.layers.conv2d(conv3_1,
+                               32,  # outout channel number
+                               (3, 3),  # kernel size
+                               padding='same',
+                               activation=activation,
+                               name='conv3_2'
+                               )
+
+    # 4*4*32
+    pooling3 = tf.layers.max_pooling2d(conv3_2,
+                                       (2, 2),  # kernel size
+                                       (2, 2),  # stride
+                                       name='pool3'
+                                       )
+    # 展平 [None, 4*4*32]
+    flatten = tf.layers.flatten(pooling3)
+    return flatten
+
+flatten = convet(x_image, tf.nn.relu)
 y_ = tf.layers.dense(flatten, 10)
 
 loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
@@ -166,6 +171,10 @@ with tf.name_scope('train_op'):
 # 1.指定面板图上显示的变量
 # 2.训练过程中将这些变量计算出来，输出到文件中
 # 3.文件解析 ./tensorboard --logdir=dir.
+
+# activation: relu, sigmoid, tanh
+# weight initilizer: he, xavier, normal
+# optimzier: Adam, Momentum, Gradient Descent.
 
 
 def variable_summary(var, name):

@@ -86,7 +86,7 @@ conv1_1 = tf.layers.conv2d(x_image,
                            name='conv1_1'
                            )
 
-conv1_2 = tf.layers.conv2d(x_image,
+conv1_2 = tf.layers.conv2d(conv1_1,
                            32,  # outout channel number
                            (3, 3),  # kernel size
                            padding='same',
@@ -109,7 +109,7 @@ conv2_1 = tf.layers.conv2d(pooling1,
                            name='conv2_1'
                            )
 
-conv2_2 = tf.layers.conv2d(pooling1,
+conv2_2 = tf.layers.conv2d(conv2_1,
                            32,  # outout channel number
                            (3, 3),  # kernel size
                            padding='same',
@@ -131,7 +131,7 @@ conv3_1 = tf.layers.conv2d(pooling2,
                            name='conv3_1'
                            )
 
-conv3_2 = tf.layers.conv2d(pooling2,
+conv3_2 = tf.layers.conv2d(conv3_1,
                            32,  # outout channel number
                            (3, 3),  # kernel size
                            padding='same',
