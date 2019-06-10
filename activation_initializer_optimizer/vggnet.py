@@ -135,7 +135,7 @@ with tf.name_scope('train_op'):
 # 3.文件解析 ./tensorboard --logdir=dir.
 
 # activation: relu, sigmoid, tanh
-# weight initializer: he, xavier, normal
+# weight initializer: he, xavier, normal, truncated_normal
 # optimzier: Adam, Momentum, Gradient Descent.
 
 
