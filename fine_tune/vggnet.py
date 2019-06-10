@@ -78,73 +78,18 @@ x_image = tf.reshape(x, [-1, 3, 32, 32])
 x_image = tf.transpose(x_image, perm=[0, 2, 3, 1])
 
 # conv1: 神经元图,feature_map,输出图像
-conv1_1 = tf.layers.conv2d(x_image,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv1_1'
-                           )
-
-conv1_2 = tf.layers.conv2d(conv1_1,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv1_2'
-                           )
-
+conv1_1 = tf.layers.conv2d(x_image, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_1')
+conv1_2 = tf.layers.conv2d(conv1_1, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_2')
 # 16*16
-pooling1 = tf.layers.max_pooling2d(conv1_2,
-                                   (2, 2),  # kernel size
-                                   (2, 2),  # stride
-                                   name='pool1'
-                                   )
-
-conv2_1 = tf.layers.conv2d(pooling1,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv2_1'
-                           )
-
-conv2_2 = tf.layers.conv2d(conv2_1,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv2_2'
-                           )
+pooling1 = tf.layers.max_pooling2d(conv1_2, (2, 2), (2, 2), name='pool1')
+conv2_1 = tf.layers.conv2d(pooling1, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv2_1')
+conv2_2 = tf.layers.conv2d(conv2_1, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv2_2')
 # 8*8
-pooling2 = tf.layers.max_pooling2d(conv2_2,
-                                   (2, 2),  # kernel size
-                                   (2, 2),  # stride
-                                   name='pool2'
-                                   )
-
-conv3_1 = tf.layers.conv2d(pooling2,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv3_1'
-                           )
-
-conv3_2 = tf.layers.conv2d(conv3_1,
-                           32,  # outout channel number
-                           (3, 3),  # kernel size
-                           padding='same',
-                           activation=tf.nn.relu,
-                           name='conv3_2'
-                           )
-
+pooling2 = tf.layers.max_pooling2d(conv2_2, (2, 2), (2, 2), name='pool2')
+conv3_1 = tf.layers.conv2d(pooling2, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv3_1')
+conv3_2 = tf.layers.conv2d(conv3_1, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv3_2')
 # 4*4*32
-pooling3 = tf.layers.max_pooling2d(conv3_2,
-                                   (2, 2),  # kernel size
-                                   (2, 2),  # stride
-                                   name='pool3'
-                                   )
+pooling3 = tf.layers.max_pooling2d(conv3_2, (2, 2), (2, 2), name='pool3')
 # 展平 [None, 4*4*32]
 flatten = tf.layers.flatten(pooling3)
 y_ = tf.layers.dense(flatten, 10)
@@ -161,6 +106,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float64))
 
 with tf.name_scope('train_op'):
     train_op = tf.train.AdamOptimizer(1e-3).minimize(loss)
+
 
 # tensorboard
 # 1.指定面板图上显示的变量
@@ -198,7 +144,6 @@ with tf.name_scope('summary'):
     variable_summary(conv2_2, 'conv2_2')
     variable_summary(conv3_1, 'conv3_1')
     variable_summary(conv3_2, 'conv3_2')
-
 
 # TODO.1 指定面板图上显示的变量
 # 'loss': <10, 1.1>, <20, 1.08>
@@ -257,7 +202,7 @@ with tf.Session() as sess:
     for i in range(train_steps):
         batch_data, batch_labels = train_data.next_batch(batch_size)
         eval_ops = [loss, accuracy, train_op]
-        should_output_summary = ((i+1) % output_summary_every_steps == 0)
+        should_output_summary = ((i + 1) % output_summary_every_steps == 0)
         if should_output_summary:
             eval_ops.append(merge_summary)
 
@@ -265,10 +210,10 @@ with tf.Session() as sess:
         loss_val, acc_val = eval_ops_results[0:2]
         if should_output_summary:
             train_summary_str = eval_ops_results[-1]
-            train_writer.add_summary(train_summary_str, i+1)
+            train_writer.add_summary(train_summary_str, i + 1)
             test_summary_str = sess.run([merge_summary_test],
                                         feed_dict={x: fixed_test_batch_data, y: fixed_test_batch_labels})[0]
-            test_writer.add_summary(test_summary_str, i+1)
+            test_writer.add_summary(test_summary_str, i + 1)
         if (i + 1) % 500 == 0:
             print('[Train] Step: {}, loss: {}, acc: {}'.format(i + 1, loss_val, acc_val))
         if (i + 1) % 5000 == 0:
@@ -283,6 +228,6 @@ with tf.Session() as sess:
                 all_test_acc_val.append(test_acc_val)
             test_acc = np.mean(all_test_acc_val)
             print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))
-        if (i+1) % output_model_every_steps == 0:
-            saver.save(sess, os.path.join(model_dir, 'ckp-%d05' % (i+1)))
-            print('model saved to ckp-%d05' % (i+1))
+        if (i + 1) % output_model_every_steps == 0:
+            saver.save(sess, os.path.join(model_dir, 'ckp-%d05' % (i + 1)))
+            print('model saved to ckp-%d05' % (i + 1))
