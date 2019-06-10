@@ -78,80 +78,36 @@ x_image = tf.reshape(x, [-1, 3, 32, 32])
 x_image = tf.transpose(x_image, perm=[0, 2, 3, 1])
 
 
-def convet(inputs, activation):
+def convet(inputs, activation, kernel_initializer):
     # conv1: 神经元图,feature_map,输出图像
-    conv1_1 = tf.layers.conv2d(inputs,
-                               32,  # outout channel number
-                               (3, 3),  # kernel size
-                               padding='same',
-                               activation=activation,
-                               name='conv1_1'
-                               )
-
-    conv1_2 = tf.layers.conv2d(conv1_1,
-                               32,  # outout channel number
-                               (3, 3),  # kernel size
-                               padding='same',
-                               activation=activation,
-                               name='conv1_2'
-                               )
-
+    conv1_1 = tf.layers.conv2d(inputs, 32, (3, 3), padding='same', kernel_initializer=kernel_initializer,
+                               activation=activation, name='conv1_1')
+    conv1_2 = tf.layers.conv2d(conv1_1, 32, (3, 3), padding='same', kernel_initializer=kernel_initializer,
+                               activation=activation, name='conv1_2')
     # 16*16
-    pooling1 = tf.layers.max_pooling2d(conv1_2,
-                                       (2, 2),  # kernel size
-                                       (2, 2),  # stride
-                                       name='pool1'
-                                       )
-
-    conv2_1 = tf.layers.conv2d(pooling1,
-                               32,  # outout channel number
-                               (3, 3),  # kernel size
-                               padding='same',
-                               activation=activation,
-                               name='conv2_1'
-                               )
-
-    conv2_2 = tf.layers.conv2d(conv2_1,
-                               32,  # outout channel number
-                               (3, 3),  # kernel size
-                               padding='same',
-                               activation=activation,
-                               name='conv2_2'
-                               )
+    pooling1 = tf.layers.max_pooling2d(conv1_2, (2, 2), (2, 2), name='pool1')
+    conv2_1 = tf.layers.conv2d(pooling1, 32, (3, 3), padding='same', kernel_initializer=kernel_initializer,
+                               activation=activation, name='conv2_1')
+    conv2_2 = tf.layers.conv2d(conv2_1, 32, (3, 3), padding='same', kernel_initializer=kernel_initializer,
+                               activation=activation, name='conv2_2')
     # 8*8
-    pooling2 = tf.layers.max_pooling2d(conv2_2,
-                                       (2, 2),  # kernel size
-                                       (2, 2),  # stride
-                                       name='pool2'
-                                       )
-
-    conv3_1 = tf.layers.conv2d(pooling2,
-                               32,  # outout channel number
-                               (3, 3),  # kernel size
-                               padding='same',
-                               activation=activation,
-                               name='conv3_1'
-                               )
-
-    conv3_2 = tf.layers.conv2d(conv3_1,
-                               32,  # outout channel number
-                               (3, 3),  # kernel size
-                               padding='same',
-                               activation=activation,
-                               name='conv3_2'
-                               )
-
+    pooling2 = tf.layers.max_pooling2d(conv2_2, (2, 2), (2, 2), name='pool2')
+    conv3_1 = tf.layers.conv2d(pooling2, 32, (3, 3), padding='same', kernel_initializer=kernel_initializer,
+                               activation=activation, name='conv3_1')
+    conv3_2 = tf.layers.conv2d(conv3_1, 32, (3, 3), padding='same', kernel_initializer=kernel_initializer,
+                               activation=activation, name='conv3_2')
     # 4*4*32
-    pooling3 = tf.layers.max_pooling2d(conv3_2,
-                                       (2, 2),  # kernel size
-                                       (2, 2),  # stride
-                                       name='pool3'
-                                       )
+    pooling3 = tf.layers.max_pooling2d(conv3_2, (2, 2), (2, 2), name='pool3')
     # 展平 [None, 4*4*32]
-    flatten = tf.layers.flatten(pooling3)
-    return flatten
+    return tf.layers.flatten(pooling3)
 
-flatten = convet(x_image, tf.nn.relu)
+
+# sigmoid: 53.59% vs relu: 73.35% on 10k
+# 默认初始化方法:tf.glorot_uniform_initializer: 76.53% 100k train.
+# tf.truncated_normal_initializer: 78.04% 100k train.
+# tf.keras.initializers.he_normal: 71.52% 100k train.
+flatten = convet(x_image, tf.nn.relu, tf.truncated_normal_initializer(stddev=0.02))
+
 y_ = tf.layers.dense(flatten, 10)
 
 loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
@@ -166,6 +122,12 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float64))
 
 with tf.name_scope('train_op'):
     train_op = tf.train.AdamOptimizer(1e-3).minimize(loss)
+    # gradient descent: 12.35% 100k.
+    # train_op = tf.train.GradientDescentOptimizer(1e-4).minimize(loss)
+    # momentum: 35.75% train 100k.
+    # train_op = tf.train.MomentumOptimizer(learning_rate=1e-4, momentum=0.9).minimize(loss)
+    # reason: 1. initializer incorrect. 2. 不充分的训练
+
 
 # tensorboard
 # 1.指定面板图上显示的变量
@@ -173,7 +135,7 @@ with tf.name_scope('train_op'):
 # 3.文件解析 ./tensorboard --logdir=dir.
 
 # activation: relu, sigmoid, tanh
-# weight initilizer: he, xavier, normal
+# weight initializer: he, xavier, normal
 # optimzier: Adam, Momentum, Gradient Descent.
 
 
@@ -193,15 +155,6 @@ def variable_summary(var, name):
         tf.summary.scalar('min', tf.reduce_min(var))
         tf.summary.scalar('max', tf.reduce_max(var))
         tf.summary.histogram('histogram', var)
-
-
-with tf.name_scope('summary'):
-    variable_summary(conv1_1, 'conv1_1')
-    variable_summary(conv1_2, 'conv1_2')
-    variable_summary(conv2_1, 'conv2_1')
-    variable_summary(conv2_2, 'conv2_2')
-    variable_summary(conv3_1, 'conv3_1')
-    variable_summary(conv3_2, 'conv3_2')
 
 
 # TODO.1 指定面板图上显示的变量
@@ -237,7 +190,7 @@ output_summary_every_steps = 100
 
 with tf.Session() as sess:
     sess.run(init)
-
+    # 写入tensorboard文件
     train_writer = tf.summary.FileWriter(train_log_dir, sess.graph)
     test_writer = tf.summary.FileWriter(test_log_dir)
 
@@ -246,7 +199,7 @@ with tf.Session() as sess:
     for i in range(train_steps):
         batch_data, batch_labels = train_data.next_batch(batch_size)
         eval_ops = [loss, accuracy, train_op]
-        should_output_summary = ((i+1) % output_summary_every_steps == 0)
+        should_output_summary = ((i + 1) % output_summary_every_steps == 0)
         if should_output_summary:
             eval_ops.append(merge_summary)
 
@@ -254,10 +207,10 @@ with tf.Session() as sess:
         loss_val, acc_val = eval_ops_results[0:2]
         if should_output_summary:
             train_summary_str = eval_ops_results[-1]
-            train_writer.add_summary(train_summary_str, i+1)
+            train_writer.add_summary(train_summary_str, i + 1)
             test_summary_str = sess.run([merge_summary_test],
                                         feed_dict={x: fixed_test_batch_data, y: fixed_test_batch_labels})[0]
-            test_writer.add_summary(test_summary_str, i+1)
+            test_writer.add_summary(test_summary_str, i + 1)
         if (i + 1) % 500 == 0:
             print('[Train] Step: {}, loss: {}, acc: {}'.format(i + 1, loss_val, acc_val))
         if (i + 1) % 5000 == 0:
