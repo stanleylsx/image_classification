@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-CIFAR_DIR = '../data/cifar-10-batches-py'
+CIFAR_DIR = '../../data/cifar-10-batches-py'
 
 
 def load_data(filename):
@@ -93,6 +93,7 @@ pooling3 = tf.layers.max_pooling2d(conv3_2, (2, 2), (2, 2), name='pool3')
 # 展平 [None, 4*4*32]
 flatten = tf.layers.flatten(pooling3)
 y_ = tf.layers.dense(flatten, 10)
+
 loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
 # y_ -> softmax
 # y -> one_hot
@@ -111,6 +112,11 @@ with tf.name_scope('train_op'):
 # 1.指定面板图上显示的变量
 # 2.训练过程中将这些变量计算出来，输出到文件中
 # 3.文件解析 ./tensorboard --logdir=dir.
+
+# fine-tune
+# 1. save models.(third_party)
+# 2. restore models.
+# 3 .keep some layers fixed.
 
 
 def variable_summary(var, name):
@@ -163,12 +169,21 @@ if not os.path.exists(train_log_dir):
 if not os.path.exists(test_log_dir):
     os.mkdir(test_log_dir)
 
+model_dir = os.path.join(run_dir, 'model')
+if not os.path.exists(model_dir):
+    os.mkdir(model_dir)
+
+saver = tf.train.Saver()
+model_name = 'ckp-1000005'
+model_path = os.path.join(model_dir, model_name)
+
 init = tf.global_variables_initializer()
 batch_size = 20
 train_steps = 10000
 test_steps = 100
 
 output_summary_every_steps = 100
+output_model_every_steps = 100
 
 with tf.Session() as sess:
     sess.run(init)
@@ -177,6 +192,12 @@ with tf.Session() as sess:
     test_writer = tf.summary.FileWriter(test_log_dir)
 
     fixed_test_batch_data, fixed_test_batch_labels = test_data.next_batch(batch_size)
+
+    if os.path.exists(model_path + '.index'):
+        saver.restore(sess, model_path)
+        print('model restored from %s' % model_path)
+    else:
+        print('model %s does not exist' % model_path)
 
     for i in range(train_steps):
         batch_data, batch_labels = train_data.next_batch(batch_size)
@@ -207,3 +228,6 @@ with tf.Session() as sess:
                 all_test_acc_val.append(test_acc_val)
             test_acc = np.mean(all_test_acc_val)
             print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))
+        if (i + 1) % output_model_every_steps == 0:
+            saver.save(sess, os.path.join(model_dir, 'ckp-%d05' % (i + 1)))
+            print('model saved to ckp-%d05' % (i + 1))

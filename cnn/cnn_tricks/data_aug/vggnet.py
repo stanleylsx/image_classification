@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-CIFAR_DIR = '../data/cifar-10-batches-py'
+CIFAR_DIR = '../../data/cifar-10-batches-py'
 
 
 def load_data(filename):
@@ -27,7 +27,7 @@ class CiferData:
             all_data.append(data)
             all_labels.append(labels)
         self._data = np.vstack(all_data)
-        self._data = self._data / 127.5 - 1
+        self._data = self._data
         self._labels = np.hstack(all_labels)
         print(self._data.shape)
         print(self._labels.shape)
@@ -76,9 +76,15 @@ y = tf.placeholder(tf.int64, [None])
 x_image = tf.reshape(x, [-1, 3, 32, 32])
 # 32*32
 x_image = tf.transpose(x_image, perm=[0, 2, 3, 1])
+# 图像增强
+data_aug_1 = tf.image.random_flip_left_right(x_image)
+data_aug_2 = tf.image.random_brightness(data_aug_1, max_delta=63)
+data_aug_3 = tf.image.random_contrast(data_aug_2, lower=0.2, upper=1.8)
+result_x_image = data_aug_3 / 127.5 - 1
+
 
 # conv1: 神经元图,feature_map,输出图像
-conv1_1 = tf.layers.conv2d(x_image, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_1')
+conv1_1 = tf.layers.conv2d(result_x_image, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_1')
 conv1_2 = tf.layers.conv2d(conv1_1, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_2')
 # 16*16
 pooling1 = tf.layers.max_pooling2d(conv1_2, (2, 2), (2, 2), name='pool1')
@@ -93,7 +99,6 @@ pooling3 = tf.layers.max_pooling2d(conv3_2, (2, 2), (2, 2), name='pool3')
 # 展平 [None, 4*4*32]
 flatten = tf.layers.flatten(pooling3)
 y_ = tf.layers.dense(flatten, 10)
-
 loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
 # y_ -> softmax
 # y -> one_hot
@@ -112,11 +117,6 @@ with tf.name_scope('train_op'):
 # 1.指定面板图上显示的变量
 # 2.训练过程中将这些变量计算出来，输出到文件中
 # 3.文件解析 ./tensorboard --logdir=dir.
-
-# fine-tune
-# 1. save models.(third_party)
-# 2. restore models.
-# 3 .keep some layers fixed.
 
 
 def variable_summary(var, name):
@@ -150,8 +150,7 @@ with tf.name_scope('summary'):
 loss_summary = tf.summary.scalar('loss', loss)
 accuracy_summary = tf.summary.scalar('accuracy', accuracy)
 
-source_image = (x_image + 1) * 127.5
-input_summary = tf.summary.image('inputs_image', source_image)
+input_summary = tf.summary.image('inputs_image', result_x_image)
 
 merge_summary = tf.summary.merge_all()
 merge_summary_test = tf.summary.merge([loss_summary, accuracy_summary])
@@ -169,22 +168,14 @@ if not os.path.exists(train_log_dir):
 if not os.path.exists(test_log_dir):
     os.mkdir(test_log_dir)
 
-model_dir = os.path.join(run_dir, 'model')
-if not os.path.exists(model_dir):
-    os.mkdir(model_dir)
-
-saver = tf.train.Saver()
-model_name = 'ckp-1000005'
-model_path = os.path.join(model_dir, model_name)
-
 init = tf.global_variables_initializer()
 batch_size = 20
 train_steps = 10000
 test_steps = 100
 
 output_summary_every_steps = 100
-output_model_every_steps = 100
 
+# train 100k: 82.6%
 with tf.Session() as sess:
     sess.run(init)
 
@@ -192,12 +183,6 @@ with tf.Session() as sess:
     test_writer = tf.summary.FileWriter(test_log_dir)
 
     fixed_test_batch_data, fixed_test_batch_labels = test_data.next_batch(batch_size)
-
-    if os.path.exists(model_path + '.index'):
-        saver.restore(sess, model_path)
-        print('model restored from %s' % model_path)
-    else:
-        print('model %s does not exist' % model_path)
 
     for i in range(train_steps):
         batch_data, batch_labels = train_data.next_batch(batch_size)
@@ -228,6 +213,3 @@ with tf.Session() as sess:
                 all_test_acc_val.append(test_acc_val)
             test_acc = np.mean(all_test_acc_val)
             print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))
-        if (i + 1) % output_model_every_steps == 0:
-            saver.save(sess, os.path.join(model_dir, 'ckp-%d05' % (i + 1)))
-            print('model saved to ckp-%d05' % (i + 1))
