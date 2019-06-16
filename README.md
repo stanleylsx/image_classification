@@ -1,2 +1,2 @@
 # neural_network_algorithm
-神经网络学习
+各类神经网络
