@@ -64,7 +64,6 @@ class VGGNet:
             h = tf.nn.relu(h)
             return h
 
-
     def flatten_layer(self, x, name):
         """
         Builds flatten layer.
