@@ -82,7 +82,7 @@ class VGGNet:
 
 
 if __name__ == '__main__':
-    vgg16_data = np.load('../data/vgg16.npy', encoding='bytes', allow_pickle=True)
+    vgg16_data = np.load('../../data/vgg16.npy', encoding='bytes', allow_pickle=True)
     vgg16_dict = vgg16_data.item()
     conv1_1 = vgg16_dict[b'conv1_1']
     print(len(conv1_1))

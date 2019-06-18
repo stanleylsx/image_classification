@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-CIFAR_DIR = './data/cifar-10-batches-py'
+CIFAR_DIR = '../data/cifar-10-batches-py'
 
 
 def load_data(filename):
