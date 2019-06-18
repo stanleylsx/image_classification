@@ -1,9 +1,7 @@
-import os
-import math
+import time
 import numpy as np
 import tensorflow as tf
-from PIL import Image
-import time
+
 
 VGG_MEAN = [103.939, 116.779, 123.68]
 
@@ -35,7 +33,7 @@ class VGGNet:
         with tf.name_scope(name):
             conv_w = self.get_conv_filter(name)
             conv_b = self.get_bias(name)
-            h = tf.nn.conv2d(x, conv_w, [1, 1, 1, 1], padding='same')
+            h = tf.nn.conv2d(x, conv_w, [1, 1, 1, 1], padding='SAME')
             h = tf.nn.bias_add(h, conv_b)
             h = tf.nn.relu(h)
             return h
@@ -47,11 +45,12 @@ class VGGNet:
         :param name:
         :return:
         """
-        return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='same', name=name)
+        return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME', name=name)
 
-    def fc_layer(self, x, name):
+    def fc_layer(self, x, name, activation=tf.nn.relu):
         """
         Builds fully-connected layer.
+        :param activation:
         :param x:
         :param name:
         :return:
@@ -61,8 +60,10 @@ class VGGNet:
             fc_b = self.get_bias(name)
             h = tf.matmul(x, fc_w)
             h = tf.nn.bias_add(h, fc_b)
-            h = tf.nn.relu(h)
-            return h
+            if activation is None:
+                return h
+            else:
+                return activation(h)
 
     def flatten_layer(self, x, name):
         """
@@ -80,9 +81,55 @@ class VGGNet:
             x = tf.reshape(x, [-1, dim])
             return x
 
+    def build(self, x_rgb):
+        """
+        Build VGG16 network structure.
+        :param x_rgb: [1, 224, 224, 3]
+        :return:
+        """
+        start_time = time.time()
+        print('building model...')
+        r, g, b = tf.split(x_rgb, [1, 1, 1], axis=3)
+        x_bgr = tf.concat([b - VGG_MEAN[0], g - VGG_MEAN[1], r - VGG_MEAN[2]], axis=3)
+        assert x_bgr.get_shape().as_list()[1:] == [224, 224, 3]
+
+        self.conv1_1 = self.conv_layer(x_bgr, b'conv1_1')
+        self.conv1_2 = self.conv_layer(self.conv1_1, b'conv1_2')
+        self.pool1 = self.pooling_layer(self.conv1_2, b'pool1')
+
+        self.conv2_1 = self.conv_layer(self.pool1, b'conv2_1')
+        self.conv2_2 = self.conv_layer(self.conv2_1, b'conv2_2')
+        self.pool2 = self.pooling_layer(self.conv2_2, b'pool2')
+
+        self.conv3_1 = self.conv_layer(self.pool2, b'conv3_1')
+        self.conv3_2 = self.conv_layer(self.conv3_1, b'conv3_2')
+        self.conv3_3 = self.conv_layer(self.conv3_2, b'conv3_3')
+        self.pool3 = self.pooling_layer(self.conv3_3, b'pool3')
+
+        self.conv4_1 = self.conv_layer(self.pool3, b'conv4_1')
+        self.conv4_2 = self.conv_layer(self.conv4_1, b'conv4_2')
+        self.conv4_3 = self.conv_layer(self.conv4_2, b'conv4_3')
+        self.pool4 = self.pooling_layer(self.conv4_3, b'pool4')
+
+        self.conv5_1 = self.conv_layer(self.pool4, b'conv5_1')
+        self.conv5_2 = self.conv_layer(self.conv5_1, b'conv5_2')
+        self.conv5_3 = self.conv_layer(self.conv5_2, b'conv5_3')
+        self.pool5 = self.pooling_layer(self.conv5_3, b'pool5')
+
+        '''
+        self.flatten5 = self.flatten_layer(self.pool5, b'flatten')
+        self.fc6 = self.fc_layer(self.flatten5, b'fc6')
+        self.fc7 = self.fc_layer(self.fc6, b'fc7')
+        self.fc8 = self.fc_layer(self.fc7, b'fc8', activation=None)
+        self.prob = tf.nn.softmax(self.fc8, name=b'prob')
+        '''
+
+        print('building model finished: %4ds' % (time.time()-start_time))
+
 
 if __name__ == '__main__':
-    vgg16_data = np.load('../../data/vgg16.npy', encoding='bytes', allow_pickle=True)
-    vgg16_dict = vgg16_data.item()
-    conv1_1 = vgg16_dict[b'conv1_1']
-    print(len(conv1_1))
+    vgg16_npy_path = '../../data/style_transfer_data/vgg16.npy'
+    data_dict = np.load(vgg16_npy_path, encoding='bytes', allow_pickle=True).item()
+    vgg16_for_result = VGGNet(data_dict)
+    content = tf.placeholder(tf.float32, shape=[1, 224, 224, 3])
+    vgg16_for_result.build(content)
