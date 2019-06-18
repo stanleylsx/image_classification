@@ -31,8 +31,6 @@ class CiferData:
         self._data = np.vstack(all_data)
         self._data = self._data / 127.5 - 1
         self._labels = np.hstack(all_labels)
-        print(self._data.shape)
-        print(self._labels.shape)
         self._num_examples = self._data.shape[0]
         self._need_shuffle = need_shuffle
         self._indicator = 0
