@@ -181,10 +181,10 @@ if not os.path.exists(test_log_dir):
 
 init = tf.global_variables_initializer()
 batch_size = 20
-train_steps = 10000
+train_steps = 100000
 test_steps = 100
 
-output_summary_every_steps = 100
+output_summary_every_steps = 1000
 
 with tf.Session() as sess:
     sess.run(init)
