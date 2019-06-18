@@ -1,5 +1,5 @@
 # neural_network_algorithm
-This project contains the principles and algorithms of common neural network.
+This project contains the principles and algorithms of common neural networks.
 # neural_network_demo
 # CNN
 ## simple cnn
