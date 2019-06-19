@@ -1,2 +1,4 @@
 # exclude
 .idea/*
+cnn/__pycache__/*
+cnn/style_transfer/__pycache__/*
