@@ -9,4 +9,7 @@ This project contains the principles and algorithms of common neural networks.
 ### res-net
 ## cnn tricks
 ## image-style transfer
+## text cnnst
+# RNN
+## LSTM
 
