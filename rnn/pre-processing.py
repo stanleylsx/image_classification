@@ -2,9 +2,6 @@
 # 词语 -> id
 # matrix -> [|v|, embed_size]
 # 词语A -> id
-
-import sys
-import os
 import jieba
 
 # input files
@@ -43,12 +40,13 @@ def generate_seg_file(input_file, output_seg_file):
             f.write(out_line)
 
 
-generate_seg_file(train_file, seg_train_file)
-generate_seg_file(val_file, seg_val_file)
-generate_seg_file(test_file, seg_test_file)
-
-
 def generate_vocab_file(input_seg_file, output_vocab_file):
+    """
+    生成词表
+    :param input_seg_file:
+    :param output_vocab_file:
+    :return:
+    """
     with open(input_seg_file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     word_dict = {}
@@ -60,4 +58,39 @@ def generate_vocab_file(input_seg_file, output_vocab_file):
     # [(word, frequency),...,()]
     sorted_word_dict = sorted(word_dict.items(), key=lambda d: d[1], reverse=True)
     with open(output_vocab_file, 'w', encoding='utf-8') as f:
-        f.write('<UNK>\t1000000')
+        f.write('<UNK>\t10000000\n')
+        for item in sorted_word_dict:
+            f.write('%s\t%d\n' % (item[0], item[1]))
+
+
+def generate_category_dict(input_file, category_file):
+    """
+    生成label
+    :param input_file:
+    :param category_file:
+    :return:
+    """
+    with open(input_file, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    category_dict = {}
+    for line in lines:
+        label, conntent = line.strip('\r\n').split('\t')
+        category_dict.setdefault(label, 0)
+        category_dict[label] += 1
+    with open(category_file, 'w', encoding='utf-8') as f:
+        for category in category_dict:
+            line = '%s\n' % category
+            print('%s\t%d' % (category, category_dict[category]))
+            f.write(line)
+
+
+if __name__ == '__main__':
+    """
+    预处理文件
+    """
+    # generate_seg_file(train_file, seg_train_file)
+    # generate_seg_file(val_file, seg_val_file)
+    # generate_seg_file(test_file, seg_test_file)
+    # generate_vocab_file(seg_train_file, vocal_file)
+    generate_category_dict(train_file, category_file)
+
