@@ -24,11 +24,11 @@ def get_default_params():
     :return:
     """
     return tf.contrib.training.HParams(
-        num_embedding_size=32,  # embedding编码的长度
-        num_timesteps=600,
-        num_lstm_nodes=[64, 64],  # 每层lstm的神经单元个数
+        num_embedding_size=16,  # embedding编码的长度
+        num_timesteps=50,
+        num_lstm_nodes=[32, 32],  # 每层lstm的神经单元个数
         num_lstm_layers=2,  # lstm的层次
-        num_fc_nodes=64,  # 全连层神经单元数目
+        num_fc_nodes=32,  # 全连层神经单元数目
         batch_size=100,
         clip_lstm_grads=1.0,  # 控制lstm梯度大小，防止梯度爆炸
         learning_rate=0.001,  # 学习率
