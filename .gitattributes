@@ -1,3 +1,0 @@
-*.npy filter=lfs diff=lfs merge=lfs -text
-data/text_classification_data/cnews.train.txt filter=lfs diff=lfs merge=lfs -text
-rnn/cnews.train.seg.txt filter=lfs diff=lfs merge=lfs -text
