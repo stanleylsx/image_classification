@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-CIFAR_DIR = '../data/cifar-10-batches-py'
+CIFAR_DIR = './data/cifar-10-batches-py'
 
 
 def load_data(filename):
@@ -68,109 +68,84 @@ test_filenames = [os.path.join(CIFAR_DIR, 'test_batch')]
 train_data = CiferData(train_filenames, True)
 test_data = CiferData(test_filenames, False)
 
-
-def residual_block(x, output_channel):
-    """
-    residual connection implementation
-    :param x:
-    :param output_channel:
-    :return:
-    """
-    input_channel = x.get_shape().as_list()[-1]
-    if input_channel * 2 == output_channel:
-        increase_dim = True
-        strides = (2, 2)
-    elif input_channel == output_channel:
-        increase_dim = False
-        strides = (1, 1)
-    else:
-        raise Exception('input channel can not match output channel')
-    conv1 = tf.layers.conv2d(x,
-                             output_channel,
-                             (3, 3),
-                             strides=strides,
-                             padding='same',
-                             activation=tf.nn.relu,
-                             name='conv1')
-
-    conv2 = tf.layers.conv2d(conv1,
-                             output_channel,
-                             (3, 3),
-                             strides=(1, 1),
-                             padding='same',
-                             activation=tf.nn.relu,
-                             name='conv2')
-
-    if increase_dim:
-        # [None, image_width, image_height, channel] -> [,,,channel*2]
-        pooled_x = tf.layers.average_pooling2d(x,
-                                               (2, 2),
-                                               (2, 2),
-                                               padding='valid')
-
-        # 池化操作不会增加通道数，故需要手动的增加通道数
-        padded_x = tf.pad(pooled_x,
-                          [
-                              [0, 0],
-                              [0, 0],
-                              [0, 0],
-                              [input_channel // 2, input_channel // 2]
-                          ])
-    else:
-        padded_x = x
-    output_x = conv2 + padded_x
-    return output_x
-
-
-def res_net(x, num_residual_blocks, num_filter_base, class_num):
-    """
-    residual network implementation
-    :param x:
-    :param num_residual_blocks: eg: [3, 4, 6, 3]
-    :param num_filter_base:
-    :param class_num:
-    :return:
-    """
-    num_subsampling = len(num_residual_blocks)
-    layers = []
-    # x [None, width, height, channel] -> [width, height, channel]
-    input_size = x.get_shape().as_list()[1:]
-    with tf.variable_scope('conv0'):
-        conv0 = tf.layers.conv2d(x,
-                                 num_filter_base,
-                                 (3, 3),
-                                 strides=(1, 1),
-                                 padding='same',
-                                 activation=tf.nn.relu,
-                                 name='conv0')
-        layers.append(conv0)
-    # num_subsampling = 4 , sample_id = [0, 1, 2, 3]
-    for sample_id in range(num_subsampling):
-        for i in range(num_residual_blocks[sample_id]):
-            with tf.variable_scope('conv%d_%d' % (sample_id, i)):
-                conv = residual_block(layers[-1], num_filter_base * (2 ** sample_id))
-                layers.append(conv)
-
-    multiplier = 2 ** (num_subsampling - 1)
-    assert layers[-1].get_shape().as_list()[1:] == [input_size[0] / multiplier, input_size[1] / multiplier,
-                                                    num_filter_base * multiplier]
-    with tf.variable_scope('fc'):
-        # layer[-1].shape : [None, width, height, channel]
-        # kernal_size : image_width, image_height
-        global_pool = tf.reduce_mean(layers[-1], [1, 2])
-        logits = tf.layers.dense(global_pool, class_num)
-        layers.append(logits)
-    return layers[-1]
-
-
 x = tf.placeholder(tf.float32, [None, 3072])
 y = tf.placeholder(tf.int64, [None])
-# [None] eg: [0,5,6,3]
+# [None]
 x_image = tf.reshape(x, [-1, 3, 32, 32])
 # 32*32
 x_image = tf.transpose(x_image, perm=[0, 2, 3, 1])
 
-y_ = res_net(x_image, [2, 3, 2], 32, 10)
+# conv1: 神经元图,feature_map,输出图像
+conv1_1 = tf.layers.conv2d(x_image,
+                           32,  # outout channel number
+                           (3, 3),  # kernel size
+                           padding='same',
+                           activation=tf.nn.relu,
+                           name='conv1_1'
+                           )
+
+conv1_2 = tf.layers.conv2d(conv1_1,
+                           32,  # outout channel number
+                           (3, 3),  # kernel size
+                           padding='same',
+                           activation=tf.nn.relu,
+                           name='conv1_2'
+                           )
+
+# 16*16
+pooling1 = tf.layers.max_pooling2d(conv1_2,
+                                   (2, 2),  # kernel size
+                                   (2, 2),  # stride
+                                   name='pool1'
+                                   )
+
+conv2_1 = tf.layers.conv2d(pooling1,
+                           32,  # outout channel number
+                           (3, 3),  # kernel size
+                           padding='same',
+                           activation=tf.nn.relu,
+                           name='conv2_1'
+                           )
+
+conv2_2 = tf.layers.conv2d(conv2_1,
+                           32,  # outout channel number
+                           (3, 3),  # kernel size
+                           padding='same',
+                           activation=tf.nn.relu,
+                           name='conv2_2'
+                           )
+# 8*8
+pooling2 = tf.layers.max_pooling2d(conv2_2,
+                                   (2, 2),  # kernel size
+                                   (2, 2),  # stride
+                                   name='pool2'
+                                   )
+
+conv3_1 = tf.layers.conv2d(pooling2,
+                           32,  # outout channel number
+                           (3, 3),  # kernel size
+                           padding='same',
+                           activation=tf.nn.relu,
+                           name='conv3_1'
+                           )
+
+conv3_2 = tf.layers.conv2d(conv3_1,
+                           32,  # outout channel number
+                           (3, 3),  # kernel size
+                           padding='same',
+                           activation=tf.nn.relu,
+                           name='conv3_2'
+                           )
+
+# 4*4*32
+pooling3 = tf.layers.max_pooling2d(conv3_2,
+                                   (2, 2),  # kernel size
+                                   (2, 2),  # stride
+                                   name='pool3'
+                                   )
+# 展平 [None, 4*4*32]
+flatten = tf.layers.flatten(pooling3)
+y_ = tf.layers.dense(flatten, 10)
 
 loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
 # y_ -> softmax

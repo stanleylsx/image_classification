@@ -4,7 +4,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-CIFAR_DIR = '../../../data/cifar-10-batches-py'
+CIFAR_DIR = '../../data/cifar-10-batches-py'
 
 
 def load_data(filename):
@@ -27,7 +27,7 @@ class CiferData:
             all_data.append(data)
             all_labels.append(labels)
         self._data = np.vstack(all_data)
-        self._data = self._data
+        self._data = self._data / 127.5 - 1
         self._labels = np.hstack(all_labels)
         self._num_examples = self._data.shape[0]
         self._need_shuffle = need_shuffle
@@ -74,15 +74,10 @@ y = tf.placeholder(tf.int64, [None])
 x_image = tf.reshape(x, [-1, 3, 32, 32])
 # 32*32
 x_image = tf.transpose(x_image, perm=[0, 2, 3, 1])
-# 图像增强
-data_aug_1 = tf.image.random_flip_left_right(x_image)
-data_aug_2 = tf.image.random_brightness(data_aug_1, max_delta=63)
-data_aug_3 = tf.image.random_contrast(data_aug_2, lower=0.2, upper=1.8)
-result_x_image = data_aug_3 / 127.5 - 1
 
 
 # conv1: 神经元图,feature_map,输出图像
-conv1_1 = tf.layers.conv2d(result_x_image, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_1')
+conv1_1 = tf.layers.conv2d(x_image, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_1')
 conv1_2 = tf.layers.conv2d(conv1_1, 32, (3, 3), padding='same', activation=tf.nn.relu, name='conv1_2')
 # 16*16
 pooling1 = tf.layers.max_pooling2d(conv1_2, (2, 2), (2, 2), name='pool1')
@@ -148,7 +143,8 @@ with tf.name_scope('summary'):
 loss_summary = tf.summary.scalar('loss', loss)
 accuracy_summary = tf.summary.scalar('accuracy', accuracy)
 
-input_summary = tf.summary.image('inputs_image', result_x_image)
+source_image = (x_image + 1) * 127.5
+input_summary = tf.summary.image('inputs_image', source_image)
 
 merge_summary = tf.summary.merge_all()
 merge_summary_test = tf.summary.merge([loss_summary, accuracy_summary])
