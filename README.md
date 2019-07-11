@@ -30,6 +30,11 @@ cifar-10
 ## Mobile-net
 ![mobile-net-1](img/mobilenet_structure_1.png)
 ![mobile-net-2](img/mobilenet_structure_2.png)
-## cnn tricks
+## Cnn tricks
+### Activation
+### Initializer
+### Optimizer
+### Data augmentation
+### Fine tune
 
 
