@@ -4,8 +4,6 @@ import numpy as np
 import os
 import tensorflow as tf
 
-CIFAR_DIR = '../../data/cifar-10-batches-py'
-
 
 def load_data(filename):
     """
@@ -62,11 +60,6 @@ class CiferData:
         self._indicator = end_indicator
         return batch_data, batch_labels
 
-
-train_filenames = [os.path.join(CIFAR_DIR, 'data_batch_{}'.format(i)) for i in range(1, 6)]
-test_filenames = [os.path.join(CIFAR_DIR, 'test_batch')]
-train_data = CiferData(train_filenames, True)
-test_data = CiferData(test_filenames, False)
 
 x = tf.placeholder(tf.float32, [None, 3072])
 y = tf.placeholder(tf.int64, [None])
@@ -179,47 +172,53 @@ if not os.path.exists(train_log_dir):
 if not os.path.exists(test_log_dir):
     os.mkdir(test_log_dir)
 
-init = tf.global_variables_initializer()
-batch_size = 20
-train_steps = 100000
-test_steps = 100
+if __name__ == '__main__':
+    CIFAR_DIR = '../../data/cifar-10-batches-py'
+    train_filenames = [os.path.join(CIFAR_DIR, 'data_batch_{}'.format(i)) for i in range(1, 6)]
+    test_filenames = [os.path.join(CIFAR_DIR, 'test_batch')]
+    train_data = CiferData(train_filenames, True)
+    test_data = CiferData(test_filenames, False)
+    init = tf.global_variables_initializer()
+    batch_size = 20
+    train_steps = 100000
+    test_steps = 100
 
-output_summary_every_steps = 1000
+    output_summary_every_steps = 1000
 
-with tf.Session() as sess:
-    sess.run(init)
-    # 写入tensorboard文件
-    train_writer = tf.summary.FileWriter(train_log_dir, sess.graph)
-    test_writer = tf.summary.FileWriter(test_log_dir)
+    with tf.Session() as sess:
+        sess.run(init)
+        # 写入tensorboard文件
+        train_writer = tf.summary.FileWriter(train_log_dir, sess.graph)
+        test_writer = tf.summary.FileWriter(test_log_dir)
 
-    fixed_test_batch_data, fixed_test_batch_labels = test_data.next_batch(batch_size)
+        fixed_test_batch_data, fixed_test_batch_labels = test_data.next_batch(batch_size)
 
-    for i in range(train_steps):
-        batch_data, batch_labels = train_data.next_batch(batch_size)
-        eval_ops = [loss, accuracy, train_op]
-        should_output_summary = ((i + 1) % output_summary_every_steps == 0)
-        if should_output_summary:
-            eval_ops.append(merge_summary)
+        for i in range(train_steps):
+            batch_data, batch_labels = train_data.next_batch(batch_size)
+            eval_ops = [loss, accuracy, train_op]
+            should_output_summary = ((i + 1) % output_summary_every_steps == 0)
+            if should_output_summary:
+                eval_ops.append(merge_summary)
 
-        eval_ops_results = sess.run(eval_ops, feed_dict={x: batch_data, y: batch_labels})
-        loss_val, acc_val = eval_ops_results[0:2]
-        if should_output_summary:
-            train_summary_str = eval_ops_results[-1]
-            train_writer.add_summary(train_summary_str, i + 1)
-            test_summary_str = sess.run([merge_summary_test],
-                                        feed_dict={x: fixed_test_batch_data, y: fixed_test_batch_labels})[0]
-            test_writer.add_summary(test_summary_str, i + 1)
-        if (i + 1) % 500 == 0:
-            print('[Train] Step: {}, loss: {}, acc: {}'.format(i + 1, loss_val, acc_val))
-        if (i + 1) % 5000 == 0:
-            test_data = CiferData(test_filenames, False)
-            all_test_acc_val = []
-            for j in range(test_steps):
-                test_batch_data, test_batch_labels = test_data.next_batch(batch_size)
-                test_acc_val = sess.run(
-                    [accuracy], feed_dict={x: test_batch_data,
-                                           y: test_batch_labels
-                                           })
-                all_test_acc_val.append(test_acc_val)
-            test_acc = np.mean(all_test_acc_val)
-            print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))
+            eval_ops_results = sess.run(eval_ops, feed_dict={x: batch_data, y: batch_labels})
+            loss_val, acc_val = eval_ops_results[0:2]
+            if should_output_summary:
+                train_summary_str = eval_ops_results[-1]
+                train_writer.add_summary(train_summary_str, i + 1)
+                test_summary_str = sess.run([merge_summary_test],
+                                            feed_dict={x: fixed_test_batch_data, y: fixed_test_batch_labels})[0]
+                test_writer.add_summary(test_summary_str, i + 1)
+            if (i + 1) % 500 == 0:
+                print('[Train] Step: {}, loss: {}, acc: {}'.format(i + 1, loss_val, acc_val))
+            if (i + 1) % 5000 == 0:
+                test_data = CiferData(test_filenames, False)
+                all_test_acc_val = []
+                for j in range(test_steps):
+                    test_batch_data, test_batch_labels = test_data.next_batch(batch_size)
+                    test_acc_val = sess.run(
+                        [accuracy], feed_dict={x: test_batch_data,
+                                               y: test_batch_labels
+                                               })
+                    all_test_acc_val.append(test_acc_val)
+                test_acc = np.mean(all_test_acc_val)
+                print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))
