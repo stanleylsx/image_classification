@@ -195,10 +195,7 @@ if __name__ == '__main__':
         sess.run(init)
         for i in range(train_steps):
             batch_data, batch_labels = train_data.next_batch(batch_size)
-            loss_val, acc_val, _ = sess.run(
-                [loss, accuracy, train_op],
-                feed_dict={x: batch_data,
-                           y: batch_labels})
+            loss_val, acc_val, _ = sess.run([loss, accuracy, train_op], feed_dict={x: batch_data, y: batch_labels})
             if (i + 1) % 500 == 0:
                 print('[Train] Step: {}, loss: {}, acc: {}'.format(i + 1, loss_val, acc_val))
             if (i + 1) % 5000 == 0:
@@ -206,10 +203,7 @@ if __name__ == '__main__':
                 all_test_acc_val = []
                 for j in range(test_steps):
                     test_batch_data, test_batch_labels = test_data.next_batch(batch_size)
-                    test_acc_val = sess.run(
-                        [accuracy], feed_dict={x: test_batch_data,
-                                               y: test_batch_labels
-                                               })
+                    test_acc_val = sess.run([accuracy], feed_dict={x: test_batch_data, y: test_batch_labels})
                     all_test_acc_val.append(test_acc_val)
                 test_acc = np.mean(all_test_acc_val)
                 print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))

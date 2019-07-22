@@ -68,7 +68,6 @@ x_image = tf.reshape(x, [-1, 3, 32, 32])
 # 32*32
 x_image = tf.transpose(x_image, perm=[0, 2, 3, 1])
 
-
 # conv1: 神经元图,feature_map,输出图像
 conv1_1 = tf.layers.conv2d(x_image,
                            32,  # outout channel number
@@ -140,12 +139,10 @@ pooling3 = tf.layers.max_pooling2d(conv3_2,
 # 展平 [None, 4*4*32]
 flatten = tf.layers.flatten(pooling3)
 y_ = tf.layers.dense(flatten, 10)
-
 loss = tf.losses.sparse_softmax_cross_entropy(labels=y, logits=y_)
 # y_ -> softmax
 # y -> one_hot
 # loss = y_logy_
-
 # indices
 predict = tf.argmax(y_, 1)
 correct_prediction = tf.equal(predict, y)
@@ -153,6 +150,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float64))
 
 with tf.name_scope('train_op'):
     train_op = tf.train.AdamOptimizer(1e-3).minimize(loss)
+
 
 if __name__ == '__main__':
     CIFAR_DIR = './data/cifar-10-batches-py'
@@ -171,10 +169,7 @@ if __name__ == '__main__':
         sess.run(init)
         for i in range(train_steps):
             batch_data, batch_labels = train_data.next_batch(batch_size)
-            loss_val, acc_val, _ = sess.run(
-                [loss, accuracy, train_op],
-                feed_dict={x: batch_data,
-                           y: batch_labels})
+            loss_val, acc_val, _ = sess.run([loss, accuracy, train_op], feed_dict={x: batch_data, y: batch_labels})
             if (i + 1) % 500 == 0:
                 print('[Train] Step: {}, loss: {}, acc: {}'.format(i + 1, loss_val, acc_val))
             if (i + 1) % 5000 == 0:
@@ -182,10 +177,7 @@ if __name__ == '__main__':
                 all_test_acc_val = []
                 for j in range(test_steps):
                     test_batch_data, test_batch_labels = test_data.next_batch(batch_size)
-                    test_acc_val = sess.run(
-                        [accuracy], feed_dict={x: test_batch_data,
-                                               y: test_batch_labels
-                                               })
+                    test_acc_val = sess.run([accuracy], feed_dict={x: test_batch_data, y: test_batch_labels})
                     all_test_acc_val.append(test_acc_val)
                 test_acc = np.mean(all_test_acc_val)
                 print('[Test] Step: {}, acc: {}'.format(i + 1, test_acc))
