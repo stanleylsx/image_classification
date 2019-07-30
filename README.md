@@ -12,7 +12,8 @@ cifar-10
 意义：分类问题第二，物体检测第一(ImageNet2014)。  
 结构：更深的网络结构；使用3x3的卷积核和1x1的卷积核；每经过一个pooling层，通道数目翻倍。
 两个3x3卷积层视野率等于一个5x5卷积核，多一次线性变换且参数数量降低28%，1x1的卷积核可以看做在对应通道上的非线性变换，有通道降维的作用。  
-![vgg-net](img/vggnet_structure.jpg)
+![vgg-net](img/vggnet_structure.jpg)  
+本项目实现的代码基于cifar数据集，实现了简单层次的vggnet，两次卷积加一个池化层并重复三次并且最后全连接层只实现了一层。
 
 ## Res-net
 ![res-net-1](img/resnet.png)
