@@ -15,7 +15,7 @@ cifar-10
 ![vgg-net](img/vggnet_structure.jpg)  
 本项目实现的代码基于Cifar数据集，实现了简单层次的vggnet，两次卷积加一个池化层并重复三次并且最后全连接层只实现了一层。
 ## Res-net 
-![res-net-1](img/resnet_1.png) 
+![res-net-1](img/Resnet_1.png) 
 论文：《Deep Residual Learning for Image Recognition》   
 意义：ILSVRC2015分类比赛冠军，解决深层次网络训练问题。  
 结构：加入恒等变换子结构，identity部分是恒等变换，F(x)为残差学习，学习使得F(x)趋向0，从而忽略深度。  
@@ -33,8 +33,6 @@ cifar-10
 
 代码同样使用Cifer数据集，由于数据集图片较小，所以在输入到残差结构前的卷积层步长设定为1，且没有经过3x3的max_pooling层。
 每个残差块都由两个3x3卷积核组成，总共有三个残差层，残差块的个数分别为2、3、2。
-
-![res-net-1](img/resnet_1.png)  
 
 ## Inception-net
 ![inception-net](img/inceptionnet.png)
