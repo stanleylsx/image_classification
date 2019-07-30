@@ -29,15 +29,21 @@ cifar-10
 
 ![res-net-3](img/resnet_structure.png)
 上图表格中有更多的结构，从各个结构可以看出ResNet强化了卷积层，弱化了全连接层，维持了参数平衡。  
-特点：残差结构使得网络需要的学习的只是变少，容易学习；残差结构使得每一层的数据分布接近，容易学习。
+特点：残差结构使得网络需要的学习的知识变少，容易学习；残差结构使得每一层的数据分布接近，容易学习。
 
 代码同样使用Cifer数据集，由于数据集图片较小，所以在输入到残差结构前的卷积层步长设定为1，且没有经过3x3的max_pooling层。
 每个残差块都由两个3x3卷积核组成，总共有三个残差层，残差块的个数分别为2、3、2。
 
 ## Inception-net
+论文：《Rethinking the Inception Architecture for Computer Vision》    
+意义：主要是工程的优化，使得同样的参数数量训练更加的效率。一方面解决更深的网络过拟合，另外一方面解决更深的网络有更大计算量的问题。
+结构：主要是v1~v4四个结构。
 ![inception-net](img/inceptionnet.png)
 ### V1
 ![inception-net-v1](img/inceptionnet_v1_structure.png)
+
+![inception-net-v1_1](img/inceptionnet_v1_structure_1.png)
+采用分组卷积，组与组之间的数据在分组计算时候不会交叉。一层上同时使用多种卷积核，看到各层的feature；不同组之间的feature不交叉计算，减少了计算量。
 ### V2
 ![inception-net-v2](img/inceptionnet_v2_structure.png)
 ### V3
