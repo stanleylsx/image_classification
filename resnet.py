@@ -61,14 +61,14 @@ class CiferData:
         return batch_data, batch_labels
 
 
-def residual_block(x, output_channel):
+def residual_block(input, output_channel):
     """
     residual connection implementation
-    :param x:
+    :param input:
     :param output_channel:
     :return:
     """
-    input_channel = x.get_shape().as_list()[-1]
+    input_channel = input.get_shape().as_list()[-1]
     if input_channel * 2 == output_channel:
         increase_dim = True
         strides = (2, 2)
@@ -77,7 +77,7 @@ def residual_block(x, output_channel):
         strides = (1, 1)
     else:
         raise Exception('input channel can not match output channel')
-    conv1 = tf.layers.conv2d(x,
+    conv1 = tf.layers.conv2d(input,
                              output_channel,
                              (3, 3),
                              strides=strides,
@@ -95,7 +95,7 @@ def residual_block(x, output_channel):
 
     if increase_dim:
         # [None, image_width, image_height, channel] -> [,,,channel*2]
-        pooled_x = tf.layers.average_pooling2d(x,
+        pooled_x = tf.layers.average_pooling2d(input,
                                                (2, 2),
                                                (2, 2),
                                                padding='valid')
@@ -109,15 +109,15 @@ def residual_block(x, output_channel):
                               [input_channel // 2, input_channel // 2]
                           ])
     else:
-        padded_x = x
+        padded_x = input
     output_x = conv2 + padded_x
     return output_x
 
 
-def res_net(x, num_residual_blocks, num_filter_base, class_num):
+def res_net(x_input, num_residual_blocks, num_filter_base, class_num):
     """
     residual network implementation
-    :param x:
+    :param x_input:
     :param num_residual_blocks: eg: [3, 4, 6, 3]
     :param num_filter_base:
     :param class_num:
@@ -126,9 +126,9 @@ def res_net(x, num_residual_blocks, num_filter_base, class_num):
     num_subsampling = len(num_residual_blocks)
     layers = []
     # x [None, width, height, channel] -> [width, height, channel]
-    input_size = x.get_shape().as_list()[1:]
+    input_size = x_input.get_shape().as_list()[1:]
     with tf.variable_scope('conv0'):
-        conv0 = tf.layers.conv2d(x,
+        conv0 = tf.layers.conv2d(x_input,
                                  num_filter_base,
                                  (3, 3),
                                  strides=(1, 1),

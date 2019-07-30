@@ -155,9 +155,6 @@ if __name__ == '__main__':
     batch_size = 20
     train_steps = 10000
     test_steps = 100
-    # placeholders, metrics, train_op = create_model()
-    # x, y = placeholders
-    # loss, accuracy = metrics
     with tf.Session() as sess:
         sess.run(init)
         for i in range(train_steps):
