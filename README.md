@@ -15,19 +15,19 @@ cifar-10
 ![vgg-net](img/vggnet_structure.jpg)  
 本项目实现的代码基于Cifar数据集，实现了简单层次的vggnet，两次卷积加一个池化层并重复三次并且最后全连接层只实现了一层。
 ## Res-net 
-![res-net-1](img/resnet_structure_3.png) 
+![res-net-1](img/resnet_structure_3.png)   
 论文：《Deep Residual Learning for Image Recognition》   
 意义：ILSVRC2015分类比赛冠军，解决深层次网络训练问题。  
 结构：加入恒等变换子结构，identity部分是恒等变换，F(x)为残差学习，学习使得F(x)趋向0，从而忽略深度。  
 不同的ResNet有不同结构，如图ResNet-34和ResNet-101是两种常用结构。
-![res-net-2](img/resnet_structure_1.png)   
+![res-net-2](img/resnet_structure_1.png)     
 所有的网络结构可以通用描述为：
 * 先用一个步长为2的卷积层。
 * 经过一个3x3的max_pooling层
 * 经过残差结构
 * 没有中间的全连接层，直接到输出。
 
-![res-net-3](img/resnet_structure_2.png)
+![res-net-3](img/resnet_structure_2.png)  
 上图表格中有更多的结构，从各个结构可以看出ResNet强化了卷积层，弱化了全连接层，维持了参数平衡。  
 特点：残差结构使得网络需要的学习的知识变少，容易学习；残差结构使得每一层的数据分布接近，容易学习。
 
@@ -60,12 +60,12 @@ cifar-10
 ## Mobile-net
 论文：《MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications》
 意义：引入深度可分离的卷积，进一步降低参数。
-![mobile-net-1](img/mobilenet_structure_1.png)
+![mobile-net-1](img/mobilenet_structure_1.png)  
 下图设定输入输出通道数为300，对于一个普通的3x3卷积，它需要3*3*300*300个参数。
 若分组卷积，对分组卷积来看它的参数为3*3*100*100*3。参数降低1/3。
-![mobile-net-2](img/mobilenet_structure_2.png)
+![mobile-net-2](img/mobilenet_structure_2.png)  
 
-![mobile-net-3](img/mobilenet_structure_3.png)
+![mobile-net-3](img/mobilenet_structure_3.png)  
 MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核只管一个通道。
 实现和InceptionNet结构差不多，要注意的是在通过深度可分离卷积块的时候(separable_X)，将通道分割开分别送入一个3x3的卷积核，再把它们的输出拼接起来。
 ## Cnn tricks
