@@ -39,20 +39,20 @@ cifar-10
 意义：主要是工程的优化，使得同样的参数数量训练更加的效率。一方面解决更深的网络过拟合，另外一方面解决更深的网络有更大计算量的问题。  
 结构：主要是v1~v4四个结构。  
 ![inception-net](img/inceptionnet.png)
-### V1
-![inception-net-v1](img/inceptionnet_v1_structure.png)
+### V1结构
+![inception-net-v1](img/inceptionnet_v1_structure.png)  
 
-![inception-net-v1_1](img/inceptionnet_v1_structure_1.png)
+![inception-net-v1_1](img/inceptionnet_v1_structure_1.png)  
 采用分组卷积，组与组之间的数据在分组计算时候不会交叉。一层上同时使用多种卷积核，看到各层的feature；不同组之间的feature不交叉计算，减少了计算量。
-### V2
-![inception-net-v2](img/inceptionnet_v2_structure.png)
-引入3x3的卷积核做同等卷积替换，两个3x3卷积核的视野域和一个5x5的相同。
-### V3
-![inception-net-v3](img/inceptionnet_v3_structure.png)
-进一步的做同等卷积替换，一个3x3的卷积核的视野域等同于一个1x3的卷积核加上一个3x1卷积核。
-### V4
-![inception-net-v4](img/inceptionnet_v4_structure.png)
-使用和ResNet同样的思想，引入skip connection，可解决深层次网络训练问题。
+### V2结构  
+![inception-net-v2](img/inceptionnet_v2_structure.png)  
+引入3x3的卷积核做同等卷积替换，两个3x3卷积核的视野域和一个5x5的相同。  
+### V3结构  
+![inception-net-v3](img/inceptionnet_v3_structure.png)  
+进一步的做同等卷积替换，一个3x3的卷积核的视野域等同于一个1x3的卷积核加上一个3x1卷积核。  
+### V4结构  
+![inception-net-v4](img/inceptionnet_v4_structure.png)  
+使用和ResNet同样的思想，引入skip connection，可解决深层次网络训练问题。  
 
 项目中基于v1结构实现了简单的InceptionNet，受限于数据集图片的大小，层次不深，各层的步长和核大小被调整。
 结构为conv1(3x3/1)->max_pooling1(2x2/2)->inception_2a->inception_2b->max_pooling2(2x2/2)->inception_3a->inception_3a->max_pooling2(2x2/2)->dense，
