@@ -71,6 +71,14 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 实现和InceptionNet结构差不多，要注意的是在通过深度可分离卷积块的时候(separable_X)，将通道分割开分别送入一个3x3的卷积核，再把它们的输出拼接起来。
 ## Cnn tricks
 ### Activation
+|激活函数|表达式|特点|图像|
+|---|---|---|---|
+|Sigmoid|![Sigmoid](https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D99/sign=a46bd6f1dd33c895a27e9472d01340df/0df3d7ca7bcb0a4659502a5f6f63f6246b60af62.jpg)|输入非常大或非常小时没有梯度；<br>输出均值非0；<br>exp计算比较复杂。|![Sigmoid](img/activation/sigmoid.png)|
+|Tanh|---|输入非常大或非常小时没有梯度；<br>输出均值为0；<br>计算复杂。|![tanh](img/activation/tanh.png)|
+|ReLU|---|梯度不会过小；<br>计算量小；<br>收敛速度快；<br>输出均值非0；<br>Dead ReLU:非常大的梯度流过神经元时不会再有激活现象。|![ReLU](img/activation/ReLU.png)|
+|Leaky ReLU|---|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky ReLU.png)|
+|ELU|---|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
+|Maxout|---|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
 ### Initializer
 ### Optimizer
 ### Data augmentation
