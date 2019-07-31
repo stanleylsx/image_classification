@@ -36,8 +36,8 @@ cifar-10
 
 ## Inception-net
 论文：《Rethinking the Inception Architecture for Computer Vision》    
-意义：主要是工程的优化，使得同样的参数数量训练更加的效率。一方面解决更深的网络过拟合，另外一方面解决更深的网络有更大计算量的问题。
-结构：主要是v1~v4四个结构。
+意义：主要是工程的优化，使得同样的参数数量训练更加的效率。一方面解决更深的网络过拟合，另外一方面解决更深的网络有更大计算量的问题。  
+结构：主要是v1~v4四个结构。  
 ![inception-net](img/inceptionnet.png)
 ### V1
 ![inception-net-v1](img/inceptionnet_v1_structure.png)
@@ -58,15 +58,16 @@ cifar-10
 结构为conv1(3x3/1)->max_pooling1(2x2/2)->inception_2a->inception_2b->max_pooling2(2x2/2)->inception_3a->inception_3a->max_pooling2(2x2/2)->dense，
 每个inception都会增加通道的数目，但是图片的大小维持不变。
 ## Mobile-net
-论文：《MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications》
-意义：引入深度可分离的卷积，进一步降低参数。
+论文：《MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications》   
+意义：引入深度可分离的卷积，进一步降低参数。  
 ![mobile-net-1](img/mobilenet_structure_1.png)  
-下图设定输入输出通道数为300，对于一个普通的3x3卷积，它需要3*3*300*300个参数。
-若分组卷积，对分组卷积来看它的参数为3*3*100*100*3。参数降低1/3。
-![mobile-net-2](img/mobilenet_structure_2.png)  
 
-![mobile-net-3](img/mobilenet_structure_3.png)  
-MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核只管一个通道。
+下图设定输入输出通道数为300，对于一个普通的3x3卷积，它需要3*3*300*300个参数。
+若分组卷积，对分组卷积来看它的参数为3*3*100*100*3。参数降低1/3。  
+![mobile-net-2](img/mobilenet_structure_2.png)    
+
+![mobile-net-3](img/mobilenet_structure_3.png)    
+MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核只管一个通道。  
 实现和InceptionNet结构差不多，要注意的是在通过深度可分离卷积块的时候(separable_X)，将通道分割开分别送入一个3x3的卷积核，再把它们的输出拼接起来。
 ## Cnn tricks
 ### Activation
