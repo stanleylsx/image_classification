@@ -79,8 +79,14 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 |Leaky ReLU|_max(0.1*x,x)_|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
 |ELU|![ELU](https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D159/sign=9996f16e805494ee83220b1c14f4e0e1/94cad1c8a786c917157622e8c53d70cf3ac757ed.jpg)|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
 |Maxout|_max(T(w1)*x+b1, T(w2)*x+b2)_|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
-### Initializer
 ### Optimizer
+|Optimizer|公式|优缺点|伪代码|
+|---|---|---|---|
+|SGD随机梯度下降|![SGD]()|---|---|
+|Momentum动量梯度下降|![Momentum]()|---|---|
+|Adagrad|![Adagrad]()|---|---|
+|RMSProp|![RMSProp]()|---|---|
+|Adam|![Adam]()|---|---|
 ### Data augmentation
 ### Fine tune
 
