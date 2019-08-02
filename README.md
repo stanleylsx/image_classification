@@ -78,7 +78,7 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 |ReLU|<img src="https://latex.codecogs.com/gif.latex?f(x)=max(0,x)" title="f(x)=max(0,x)" />|梯度不会过小；<br>计算量小；<br>收敛速度快；<br>输出均值非0；<br>Dead ReLU:非常大的梯度流过神经元时不会再有激活现象。|![ReLU](img/activation/ReLU.png)|
 |Leaky ReLU|<img src="https://latex.codecogs.com/gif.latex?f(x)=max(0.1x,x)" title="f(x)=max(0.1x,x)" />|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
 |ELU|<img src="https://latex.codecogs.com/gif.latex?f(x)=\left\{\begin{matrix}x,if&space;x>0&space;\\&space;\alpha(e^{x}-1),otherwise&space;\end{matrix}\right." title="f(x)=\left\{\begin{matrix}x,if x>0 \\ \alpha(e^{x}-1),otherwise \end{matrix}\right." />|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
-|Maxout|<img src="https://latex.codecogs.com/gif.latex?max(w_{1}^{T}x&plus;b_{1},w_{2}^{T}x&plus;b_{2})" title="max(w_{1}^{T}x+b_{1},w_{2}^{T}x+b_{2})" />|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
+|Maxout|![Maxout](https://latex.codecogs.com/gif.latex?max%28w_%7B1%7D%5E%7BT%7Dx&plus;b_%7B1%7D%2Cw_%7B2%7D%5E%7BT%7Dx&plus;b_%7B2%7D%29)|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
 ### Optimizer
 |Optimizer|公式|优缺点|伪代码|
 |---|---|---|---|
