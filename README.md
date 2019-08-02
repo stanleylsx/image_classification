@@ -73,12 +73,12 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 ### Activation
 |激活函数|表达式|特点|图像|
 |---|---|---|---|
-|Sigmoid|![Sigmoid](https://gss3.bdstatic.com/-Po3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D99/sign=a46bd6f1dd33c895a27e9472d01340df/0df3d7ca7bcb0a4659502a5f6f63f6246b60af62.jpg)|输入非常大或非常小时没有梯度；<br>输出均值非0；<br>exp计算比较复杂。|![Sigmoid](img/activation/sigmoid.png)|
-|Tanh|_tanh(x)_|输入非常大或非常小时没有梯度；<br>输出均值为0；<br>计算复杂。|![tanh](img/activation/tanh.png)|
-|ReLU|_max(0,x)_|梯度不会过小；<br>计算量小；<br>收敛速度快；<br>输出均值非0；<br>Dead ReLU:非常大的梯度流过神经元时不会再有激活现象。|![ReLU](img/activation/ReLU.png)|
-|Leaky ReLU|_max(0.1*x,x)_|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
-|ELU|![ELU](https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D159/sign=9996f16e805494ee83220b1c14f4e0e1/94cad1c8a786c917157622e8c53d70cf3ac757ed.jpg)|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
-|Maxout|_max(T(w1)*x+b1, T(w2)*x+b2)_|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
+|Sigmoid|<img src="https://latex.codecogs.com/gif.latex?f(x)=\frac{1}{1&plus;e^{x}}" title="f(x)=\frac{1}{1+e^{x}}" />|输入非常大或非常小时没有梯度；<br>输出均值非0；<br>exp计算比较复杂。|![Sigmoid](img/activation/sigmoid.png)|
+|Tanh|<img src="https://latex.codecogs.com/gif.latex?f(x)=tanh(x)=\frac{e^{x}-e^{-x}}{e^{x}&plus;e^{-x}}" title="f(x)=tanh(x)=\frac{e^{x}-e^{-x}}{e^{x}+e^{-x}}" />|输入非常大或非常小时没有梯度；<br>输出均值为0；<br>计算复杂。|![tanh](img/activation/tanh.png)|
+|ReLU|<img src="https://latex.codecogs.com/gif.latex?f(x)=max(0,x)" title="f(x)=max(0,x)" />|梯度不会过小；<br>计算量小；<br>收敛速度快；<br>输出均值非0；<br>Dead ReLU:非常大的梯度流过神经元时不会再有激活现象。|![ReLU](img/activation/ReLU.png)|
+|Leaky ReLU|<img src="https://latex.codecogs.com/gif.latex?f(x)=max(0.1x,x)" title="f(x)=max(0.1x,x)" />|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
+|ELU|<img src="https://latex.codecogs.com/gif.latex?f(x)=\left\{\begin{matrix}x,if&space;x>0&space;\\&space;\alpha(e^{x}-1),otherwise&space;\end{matrix}\right." title="f(x)=\left\{\begin{matrix}x,if x>0 \\ \alpha(e^{x}-1),otherwise \end{matrix}\right." />|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
+|Maxout|<img src="https://latex.codecogs.com/gif.latex?max(w_{1}^{T}x&plus;b_{1},w_{2}^{T}x&plus;b_{2})" title="max(w_{1}^{T}x+b_{1},w_{2}^{T}x+b_{2})" />|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
 ### Optimizer
 |Optimizer|公式|优缺点|伪代码|
 |---|---|---|---|
