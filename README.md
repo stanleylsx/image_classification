@@ -73,12 +73,12 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 ### Activation
 |激活函数|表达式|特点|图像|
 |---|---|---|---|
-|Sigmoid|<img src="https://latex.codecogs.com/gif.latex?f(x)=\frac{1}{1&plus;e^{x}}" title="f(x)=\frac{1}{1+e^{x}}" />|输入非常大或非常小时没有梯度；<br>输出均值非0；<br>exp计算比较复杂。|![Sigmoid](img/activation/sigmoid.png)|
-|Tanh|<img src="https://latex.codecogs.com/gif.latex?f(x)=tanh(x)=\frac{e^{x}-e^{-x}}{e^{x}&plus;e^{-x}}" title="f(x)=tanh(x)=\frac{e^{x}-e^{-x}}{e^{x}+e^{-x}}" />|输入非常大或非常小时没有梯度；<br>输出均值为0；<br>计算复杂。|![tanh](img/activation/tanh.png)|
-|ReLU|<img src="https://latex.codecogs.com/gif.latex?f(x)=max(0,x)" title="f(x)=max(0,x)" />|梯度不会过小；<br>计算量小；<br>收敛速度快；<br>输出均值非0；<br>Dead ReLU:非常大的梯度流过神经元时不会再有激活现象。|![ReLU](img/activation/ReLU.png)|
-|Leaky ReLU|<img src="https://latex.codecogs.com/gif.latex?f(x)=max(0.1x,x)" title="f(x)=max(0.1x,x)" />|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
-|ELU|<img src="https://latex.codecogs.com/gif.latex?f(x)=\left\{\begin{matrix}x,if&space;x>0&space;\\&space;\alpha(e^{x}-1),otherwise&space;\end{matrix}\right." title="f(x)=\left\{\begin{matrix}x,if x>0 \\ \alpha(e^{x}-1),otherwise \end{matrix}\right." />|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
-|Maxout|<img src="https://latex.codecogs.com/gif.latex?max(w_{1}^{T}x&plus;b_{1},w_{2}^{T}x&plus;b_{2})" title="max(w_{1}^{T}x+b_{1},w_{2}^{T}x+b_{2})" />|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
+|Sigmoid|![sigmoid](https://latex.codecogs.com/gif.latex?f%28x%29%3D%5Cfrac%7B1%7D%7B1%20&plus;%20e%5E%7Bx%7D%7D)|输入非常大或非常小时没有梯度；<br>输出均值非0；<br>exp计算比较复杂。|![Sigmoid](img/activation/sigmoid.png)|
+|Tanh|![tanh](https://latex.codecogs.com/gif.latex?f%28x%29%3Dtanh%28x%29%3D%5Cfrac%7Be%5E%7Bx%7D-e%5E%7B-x%7D%7D%7Be%5E%7Bx%7D&plus;e%5E%7B-x%7D%7D)|输入非常大或非常小时没有梯度；<br>输出均值为0；<br>计算复杂。|![tanh](img/activation/tanh.png)|
+|ReLU|![relu](https://latex.codecogs.com/gif.latex?f%28x%29%3Dmax%280%2Cx%29)|![ReLU](img/activation/ReLU.png)|
+|Leaky ReLU|![Leaky_ReLU](https://latex.codecogs.com/gif.latex?f%28x%29%3Dmax%280.1x%2Cx%29)|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
+|ELU|![ELU](https://latex.codecogs.com/gif.latex?f%28x%29%3D%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D%20x%2Cif%20x%3E0%5C%5C%20%5Calpha%28e%5E%7Bx%7D-1%29%2Cotherwise%20%5Cend%7Bmatrix%7D%5Cright.)|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
+|Maxout|![Maxout](https://latex.codecogs.com/gif.latex?max%28w_%7B1%7D%5E%7BT%7Dx&plus;b_%7B1%7D%2Cw_%7B2%7D%5E%7BT%7Dx&plus;b_%7B2%7D%29)|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
 ### Optimizer
 |Optimizer|公式|优缺点|伪代码|
 |---|---|---|---|
