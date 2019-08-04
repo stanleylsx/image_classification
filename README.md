@@ -88,6 +88,9 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 |RMSProp|![RMSProp_1](https://latex.codecogs.com/gif.latex?E%7Cg%5E%7B2%7D%7C_%7Bt%7D%3D%5Crho*E%7Cg%5E%7B2%7D%7C_%7Bt-1%7D&plus;%281-%5Crho%29*g_%7Bt%7D%5E%7B2%7D)<br>![RMSProp_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%20%5Ctheta_%7Bt%7D%3D-%5Cfrac%7B%5Ceta%7D%7B%5Csqrt%7BE%7Cg%5E%7B2%7D%7C_%7Bt%7D&plus;%5Cvarepsilon%20%7D%7D*g_%7Bt%7D)|适合处理非平稳目标，对于RNN效果很好；<br>由累积平方梯度变为平均平方梯度；<br>解决了Adagrad训练后期提前结束的问题。|
 |Adam|![Adam_1](https://latex.codecogs.com/gif.latex?m_%7Bt%7D%3D%5Cbeta_%7B1%7D*m_%7Bt-1%7D&plus;%281-%5Cbeta_%7B1%7D%29*g_%7Bt%7D)，![Adam_2](https://latex.codecogs.com/gif.latex?v_%7Bt%7D%3D%5Cbeta_%7B2%7D*v_%7Bt-1%7D&plus;%281-%5Cbeta_%7B2%7D%29*g_%7Bt%7D%5E%7B2%7D)<br>![Adam_3](https://latex.codecogs.com/gif.latex?%5Chat%7Bm%7D_%7Bt%7D%3D%5Cfrac%7B%7Bm%7D_%7Bt%7D%7D%7B1-%5Cbeta_%7B1%7D%5E%7Bt%7D%7D)，![Adam_4](https://latex.codecogs.com/gif.latex?%5Chat%7Bv%7D_%7Bt%7D%3D%5Cfrac%7B%7Bv%7D_%7Bt%7D%7D%7B1-%5Cbeta_%7B2%7D%5E%7Bt%7D%7D)<br>![Adam_5](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%5Ctheta_%7Bt%7D%3D-%5Cfrac%7B%5Chat%7Bm%7D_t%7D%7B%5Csqrt%7B%5Chat%7Bn%7D_t%7D&plus;%5Cvarepsilon%7D*%5Ceta)|Beta1=0.9,Beta2=0.999,learning_rate=e^(-3)；<br>不同分量有不同学习率；<br>冲量优势和学习率自适应优势的组合；<br>善于处理非平稳目标。|
 ### Data augmentation
+包含图像的归一化，图像的变形(反转、拉伸、裁剪)，色彩调节(对比度，亮度)，多尺度的处理图像使得数据更丰富以期更好的效果。
 ### Fine tune
+预训练好的模型上进行微调。
+
 
 
