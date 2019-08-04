@@ -84,7 +84,7 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 |---|---|---|
 |SGD随机梯度下降|![SGD_1](https://latex.codecogs.com/gif.latex?g_%7Bt%7D%3D%5Cbigtriangledown%20f%28%5Ctheta_%7Bt-1%7D%29)<br>![SGD_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%5Ctheta_%7Bt%7D%3D-%5Ceta%20%5Cast%20g_%7Bt%7D)|容易陷入局部极值；<br>容易陷入saddle point；<br>选择合适的learning rate比较困难。|
 |Momentum动量梯度下降|![Momentum_1](https://latex.codecogs.com/gif.latex?v_%7Bt%7D%3D%5Ceta*v_%7Bt-1%7D&plus;g_%7Bt%7D)<br>![Momentum_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%5Ctheta_%7Bt%7D%3D-%5Ceta*m_%7Bt%7D)|开始训练时，积累动量，加速训练；<br>局部极值附近震荡时，梯度为0，由于动量存在，跳出陷阱；<br>梯度改变方向时，能够缓解震荡。|
-|Adagrad|![Adagrad]()|---|
+|Adagrad|![Adagrad_1](https://latex.codecogs.com/gif.latex?n_%7Bt%7D%3Dn_%7Bt-1%7D&plus;g_%7Bt%7D%5E%7B2%7D)<br>![Adagrad_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%20%5Ctheta_%7Bt%7D%3D-%5Cfrac%7B%5Ceta%7D%7Bn_%7Bt%7D&plus;%5Cvarepsilon%7D*g_%7Bt%7D)|---|
 |RMSProp|![RMSProp]()|---|
 |Adam|![Adam]()|---|
 ### Data augmentation
