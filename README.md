@@ -82,7 +82,7 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 ### Optimizer
 |Optimizer|公式|优缺点|伪代码|
 |---|---|---|---|
-|SGD随机梯度下降|![SGD]()|---|---|
+|SGD随机梯度下降|![SGD](https://latex.codecogs.com/gif.latex?%5CDelta%5Ctheta%20_%7Bt%7D%20%3D%20-%5Ceta%20*%20%5Cbigtriangledown%20f%28%5Ctheta%20_%7Bt-1%7D%29)|---|---|
 |Momentum动量梯度下降|![Momentum]()|---|---|
 |Adagrad|![Adagrad]()|---|---|
 |RMSProp|![RMSProp]()|---|---|
