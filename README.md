@@ -80,13 +80,13 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 |ELU|![ELU](https://latex.codecogs.com/gif.latex?f%28x%29%3D%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D%20x%2Cif%20x%3E0%5C%5C%20%5Calpha%28e%5E%7Bx%7D-1%29%2Cotherwise%20%5Cend%7Bmatrix%7D%5Cright.)|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
 |Maxout|![Maxout](https://latex.codecogs.com/gif.latex?max%28w_%7B1%7D%5E%7BT%7Dx&plus;b_%7B1%7D%2Cw_%7B2%7D%5E%7BT%7Dx&plus;b_%7B2%7D%29)|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
 ### Optimizer
-|Optimizer|公式|优缺点|伪代码|
-|---|---|---|---|
-|SGD随机梯度下降|![SGD](https://latex.codecogs.com/gif.latex?%5CDelta%5Ctheta%20_%7Bt%7D%20%3D%20-%5Ceta%20*%20%5Cbigtriangledown%20f%28%5Ctheta%20_%7Bt-1%7D%29)|---|---|
-|Momentum动量梯度下降|![Momentum]()|---|---|
-|Adagrad|![Adagrad]()|---|---|
-|RMSProp|![RMSProp]()|---|---|
-|Adam|![Adam]()|---|---|
+|Optimizer|公式|优缺点|
+|---|---|---|
+|SGD随机梯度下降|![SGD_1](https://latex.codecogs.com/gif.latex?g_%7Bt%7D%3D%5Cbigtriangledown%20f%28%5Ctheta_%7Bt-1%7D%29)<br>![SGD_1](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%5Ctheta_%7Bt%7D%3D-%5Ceta%20%5Cast%20g_%7Bt%7D)|容易陷入局部极值；<br>容易陷入saddle point；<br>选择合适的learning rate比较困难。|
+|Momentum动量梯度下降|![Momentum]()|---|
+|Adagrad|![Adagrad]()|---|
+|RMSProp|![RMSProp]()|---|
+|Adam|![Adam]()|---|
 ### Data augmentation
 ### Fine tune
 
