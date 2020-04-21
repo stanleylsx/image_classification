@@ -1,5 +1,11 @@
 # Image classification
 This project contains various CNN for image classification.
+## 浏览注意事项
+### 谷歌浏览器
+请安装[MathJax Plugin for Github](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima/related)插件才能浏览latex格式的公式
+### 本地查看
+* git clone https://github.com/StanleyLsx/CS224n-Notes.git
+* 通过支持Markdown的文本编译器打开
 ## Dataset
 cifar-10
 ## Alex-net
@@ -73,24 +79,22 @@ MobileNet将分组卷积做到极致，如上图所示，每一个3x3卷积核�
 ### Activation
 |激活函数|表达式|特点|图像|
 |---|---|---|---|
-|Sigmoid|![sigmoid](https://latex.codecogs.com/gif.latex?f%28x%29%3D%5Cfrac%7B1%7D%7B1%20&plus;%20e%5E%7Bx%7D%7D)|输入非常大或非常小时没有梯度；<br>输出均值非0；<br>exp计算比较复杂。|![Sigmoid](img/activation/sigmoid.png)|
-|Tanh|![tanh](https://latex.codecogs.com/gif.latex?f%28x%29%3Dtanh%28x%29%3D%5Cfrac%7Be%5E%7Bx%7D-e%5E%7B-x%7D%7D%7Be%5E%7Bx%7D&plus;e%5E%7B-x%7D%7D)|输入非常大或非常小时没有梯度；<br>输出均值为0；<br>计算复杂。|![tanh](img/activation/tanh.png)|
-|ReLU|![relu](https://latex.codecogs.com/gif.latex?f%28x%29%3Dmax%280%2Cx%29)|梯度不会过小；<br>计算量小；<br>收敛速度快；<br>输出均值非0；<br>Dead ReLU:非常大的梯度流过神经元时不会再有激活现象。|![ReLU](img/activation/ReLU.png)|
-|Leaky ReLU|![Leaky_ReLU](https://latex.codecogs.com/gif.latex?f%28x%29%3Dmax%280.1x%2Cx%29)|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
-|ELU|![ELU](https://latex.codecogs.com/gif.latex?f%28x%29%3D%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D%20x%2Cif%20x%3E0%5C%5C%20%5Calpha%28e%5E%7Bx%7D-1%29%2Cotherwise%20%5Cend%7Bmatrix%7D%5Cright.)|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
-|Maxout|![Maxout](https://latex.codecogs.com/gif.latex?max%28w_%7B1%7D%5E%7BT%7Dx&plus;b_%7B1%7D%2Cw_%7B2%7D%5E%7BT%7Dx&plus;b_%7B2%7D%29)|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|---|
+|Sigmoid|$f(x)=\frac{1}{1+e^x}$|输入非常大或非常小时没有梯度；<br>输出均值非0；<br>exp计算比较复杂。|![Sigmoid](img/activation/sigmoid.png)|
+|Tanh|$f(x)=tanh(x)$|输入非常大或非常小时没有梯度；<br>输出均值为0；<br>计算复杂。|![tanh](img/activation/tanh.png)|
+|ReLU|$f(x)=max(0,x)$|梯度不会过小；<br>计算量小；<br>收敛速度快；<br>输出均值非0；<br>Dead ReLU:非常大的梯度流过神经元时不会再有激活现象。|![ReLU](img/activation/ReLU.png)|
+|Leaky ReLU|$f(x)=max(0.1x,x)$|解决Dead ReLU问题|![Leaky ReLU](img/activation/Leaky_ReLU.png)|
+|ELU|$f(x)=\left\{\begin{matrix}x,\ x\geq 0\\ \alpha(e^x-1),\ x<0\end{matrix}\right.$|均值更接近于0；<br>小于0时计算量大。|![ELU](img/activation/ELU.png)|
+|Maxout|$f(x)=max(w_1^Tx+b_1,w_2^Tx+b_2,...,w_n^T+b_n)$|ReLU泛化版本；<br>无Dead ReLU；<br>两倍的参数数量。|![maxout](img/activation/maxout.png)|
 ### Optimizer
 |Optimizer|公式|优缺点|
 |---|---|---|
-|SGD随机梯度下降|![SGD_1](https://latex.codecogs.com/gif.latex?g_%7Bt%7D%3D%5Cbigtriangledown%20f%28%5Ctheta_%7Bt-1%7D%29)<br>![SGD_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%5Ctheta_%7Bt%7D%3D-%5Ceta%20%5Cast%20g_%7Bt%7D)|容易陷入局部极值；<br>容易陷入saddle point；<br>选择合适的learning rate比较困难；<br>每个分量学习率相同。|
-|Momentum动量梯度下降|![Momentum_1](https://latex.codecogs.com/gif.latex?v_%7Bt%7D%3D%5Ceta*v_%7Bt-1%7D&plus;g_%7Bt%7D)<br>![Momentum_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%5Ctheta_%7Bt%7D%3D-%5Ceta*m_%7Bt%7D)|开始训练时，积累动量，加速训练；<br>局部极值附近震荡时，梯度为0，由于动量存在，跳出陷阱；<br>梯度改变方向时，能够缓解震荡。|
-|Adagrad|![Adagrad_1](https://latex.codecogs.com/gif.latex?n_%7Bt%7D%3Dn_%7Bt-1%7D&plus;g_%7Bt%7D%5E%7B2%7D)<br>![Adagrad_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%20%5Ctheta_%7Bt%7D%3D-%5Cfrac%7B%5Ceta%7D%7B%5Csqrt%7Bn_%7Bt%7D&plus;%5Cvarepsilon%7D%7D*g_%7Bt%7D)<br>![regularize](https://latex.codecogs.com/gif.latex?-%5Cfrac%7B%5Ceta%7D%7B%5Csqrt%7Bn_%7Bt%7D&plus;%5Cvarepsilon%7D%7D)为约束项|约束项前期较小，放大梯度，后期较大，缩小梯度；<br>梯度随着训练次数降低；<br>每个分量有不同的学习率。<br>学习率设置过大时，约束项过于敏感；<br>后期，约束项累计太大，会提前结束训练。|
-|RMSProp|![RMSProp_1](https://latex.codecogs.com/gif.latex?E%7Cg%5E%7B2%7D%7C_%7Bt%7D%3D%5Crho*E%7Cg%5E%7B2%7D%7C_%7Bt-1%7D&plus;%281-%5Crho%29*g_%7Bt%7D%5E%7B2%7D)<br>![RMSProp_2](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%20%5Ctheta_%7Bt%7D%3D-%5Cfrac%7B%5Ceta%7D%7B%5Csqrt%7BE%7Cg%5E%7B2%7D%7C_%7Bt%7D&plus;%5Cvarepsilon%20%7D%7D*g_%7Bt%7D)|适合处理非平稳目标，对于RNN效果很好；<br>由累积平方梯度变为平均平方梯度；<br>解决了Adagrad训练后期提前结束的问题。|
-|Adam|![Adam_1](https://latex.codecogs.com/gif.latex?m_%7Bt%7D%3D%5Cbeta_%7B1%7D*m_%7Bt-1%7D&plus;%281-%5Cbeta_%7B1%7D%29*g_%7Bt%7D)，![Adam_2](https://latex.codecogs.com/gif.latex?v_%7Bt%7D%3D%5Cbeta_%7B2%7D*v_%7Bt-1%7D&plus;%281-%5Cbeta_%7B2%7D%29*g_%7Bt%7D%5E%7B2%7D)<br>![Adam_3](https://latex.codecogs.com/gif.latex?%5Chat%7Bm%7D_%7Bt%7D%3D%5Cfrac%7B%7Bm%7D_%7Bt%7D%7D%7B1-%5Cbeta_%7B1%7D%5E%7Bt%7D%7D)，![Adam_4](https://latex.codecogs.com/gif.latex?%5Chat%7Bv%7D_%7Bt%7D%3D%5Cfrac%7B%7Bv%7D_%7Bt%7D%7D%7B1-%5Cbeta_%7B2%7D%5E%7Bt%7D%7D)<br>![Adam_5](https://latex.codecogs.com/gif.latex?%5Cbigtriangleup%5Ctheta_%7Bt%7D%3D-%5Cfrac%7B%5Chat%7Bm%7D_t%7D%7B%5Csqrt%7B%5Chat%7Bn%7D_t%7D&plus;%5Cvarepsilon%7D*%5Ceta)|默认参数设置为：Beta1=0.9,Beta2=0.999,learning_rate=e^(-3)；<br>不同分量有不同学习率；<br>冲量优势和学习率自适应优势的组合；<br>善于处理非平稳目标。|
+|SGD随机梯度下降|$g_{t}=\bigtriangledown f(\theta_{t-1})$<br>$\bigtriangleup\theta_{t}=-\eta \ast g_{t}$|容易陷入局部极值；<br>容易陷入saddle point；<br>选择合适的learning rate比较困难；<br>每个分量学习率相同。|
+|Momentum动量梯度下降|$v_{t}=\eta*v_{t-1}+g_{t}$<br>$\bigtriangleup\theta_{t}=-\eta*m_{t}$|开始训练时，积累动量，加速训练；<br>局部极值附近震荡时，梯度为0，由于动量存在，跳出陷阱；<br>梯度改变方向时，能够缓解震荡。|
+|Adagrad|$n_{t}=n_{t-1}+g_{t}^{2}$<br>$\bigtriangleup \theta_{t}=-\frac{\eta}{\sqrt{n_{t}+\varepsilon}}*g_{t}$<br>$-\frac{\eta}{\sqrt{n_{t}+\varepsilon}}$为约束项|约束项前期较小，放大梯度，后期较大，缩小梯度；<br>梯度随着训练次数降低；<br>每个分量有不同的学习率。<br>学习率设置过大时，约束项过于敏感；<br>后期，约束项累计太大，会提前结束训练。|
+|RMSProp|$E\|g^{2}\|_{t}=\rho*E\|g^{2}\|_{t-1}+(1-\rho)*g_{t}^{2}$<br>$\bigtriangleup \theta_{t}=-\frac{\eta}{\sqrt{E\|g^{2}\|_{t}+\varepsilon }}*g_{t}$|适合处理非平稳目标，对于RNN效果很好；<br>由累积平方梯度变为平均平方梯度；<br>解决了Adagrad训练后期提前结束的问题。|
+|Adam|$m_{t}=\beta_{1}*m_{t-1}+(1-\beta_{1})*g_{t}$，$v_{t}=\beta_{2}*v_{t-1}+(1-\beta_{2})*g_{t}^{2}$<br>$\hat{m}_{t}=\frac{{m}_{t}}{1-\beta_{1}^{t}}$，$\hat{v}_{t}=\frac{{v}_{t}}{1-\beta_{2}^{t}}$<br>$\bigtriangleup\theta_{t}=-\frac{\hat{m}_t}{\sqrt{\hat{n}_t}+\varepsilon}*\eta$|默认参数设置为：Beta1=0.9,Beta2=0.999,learning_rate=e^(-3)；<br>不同分量有不同学习率；<br>冲量优势和学习率自适应优势的组合；<br>善于处理非平稳目标。|
 ### Data augmentation
 包含图像的归一化，图像的变形(反转、拉伸、裁剪)，色彩调节(对比度，亮度)，多尺度的处理图像使得数据更丰富以期更好的效果。
 ### Fine tune
 预训练好的模型上进行微调。
-
-
 
