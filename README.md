@@ -4,7 +4,7 @@ This project contains various CNN for image classification.
 ### 谷歌浏览器
 请安装[MathJax Plugin for Github](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima/related)插件才能浏览latex格式的公式
 ### 本地查看
-* git clone https://github.com/StanleyLsx/CS224n-Notes.git
+* git clone https://github.com/StanleyLsx/image_classification.git
 * 通过支持Markdown的文本编译器打开
 ## Dataset
 cifar-10
